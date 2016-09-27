@@ -86,5 +86,25 @@ angular.module('starter', ['ionic', 'starter.controllers', 'starter.services'])
 })
 
 .controller('HomeTabCtrl', function($scope) {
-  console.log('HomeTabCtrl');
-});
+
+})
+
+.controller('MainCtrl', function($scope) {
+      $scope.$on("$ionicView.beforeEnter", function(event, data){
+       // handle event
+       console.log("State Params: ", data.stateId);
+       $scope.showNavHeader = data.stateId === "tabs.home" || data.stateId === "tabs.facts" || data.stateId === "tabs.facts2" ? false : true;
+     });
+
+      $scope.$on("$ionicView.enter", function(event, data){
+         // handle event
+         console.log("State Params: ", data.stateId);
+      });
+
+      $scope.$on("$ionicView.afterEnter", function(event, data){
+         // handle event
+         console.log("State Params: ", data.stateId);
+      });
+  });
+
+
