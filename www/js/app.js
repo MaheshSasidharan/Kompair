@@ -95,7 +95,7 @@ angular.module('starter', ['ionic', 'starter.controllers', 'starter.services'])
        console.log("State Params: ", data.stateId);
        $scope.showNavHeader = data.stateId === "tabs.home" || data.stateId === "tabs.facts" || data.stateId === "tabs.facts2" ? false : true;
      });
-
+      /*
       $scope.$on("$ionicView.enter", function(event, data){
          // handle event
          console.log("State Params: ", data.stateId);
@@ -105,6 +105,7 @@ angular.module('starter', ['ionic', 'starter.controllers', 'starter.services'])
          // handle event
          console.log("State Params: ", data.stateId);
       });
+      */
   });
 
 
