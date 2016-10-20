@@ -1,23 +1,12 @@
 <ion-tabs class="tabs-icon-top tabs-positive">
-        <ion-tab title="Home" icon="ion-home" href="#/tab/home">
-  		    <ion-header-bar align-title="left" class="bar-calm">
-            <!--<div class="buttons">
-              <button class="button" ng-click="doSomething()">Kompair</button>
-            </div>-->
-                <h1 class="title">Kompair</h1>
-                <div class="buttons">
-                  <a class="button button-energized" href="#/tab/logged_in_home">Login</a>
-                </div>
-            </ion-header-bar>
-          <ion-nav-view name="home-tab"></ion-nav-view>
-        </ion-tab>
-
-        <ion-tab title="About" icon="ion-ios-information" href="#/tab/about">
-          <ion-nav-view name="about-tab"></ion-nav-view>
-        </ion-tab>
-
-        <ion-tab title="Contact" icon="ion-ios-world" ui-sref="tabs.contact">
-          <ion-nav-view name="contact-tab"></ion-nav-view>
-        </ion-tab>
-
+    <ion-tab title="Home" icon="ion-home" ui-sref="kompair.home">
+        <ion-nav-view name="home-tab"></ion-nav-view>
+    </ion-tab>
+    <!-- <ion-tab title="About" icon="ion-ios-information" href="#/about"> -->
+    <ion-tab title="About" icon="ion-ios-information" ui-sref="kompair.about">
+        <ion-nav-view name="about-tab"></ion-nav-view>
+    </ion-tab>
+    <ion-tab title="Contact" icon="ion-ios-world" ui-sref="kompair.contact">
+        <ion-nav-view name="contact-tab"></ion-nav-view>
+    </ion-tab>
 </ion-tabs>
