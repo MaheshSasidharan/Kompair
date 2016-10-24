@@ -3,42 +3,53 @@ div {
     box-sizing: border-box;
 }
 
+
 /* Common */
+
+.button-icon .icon:before,
+.button-icon.icon:before {
+    font-size: 22px;
+}
+
 .AlignCenter {
     text-align: center;
 }
 
-.BoldItalic{
-	font-weight: bold;
-	font-style: italic;
+.BoldItalic {
+    font-weight: bold;
+    font-style: italic;
 }
 
-.Kom_Border{
-	border-radius: 3px;
-	border: 1px solid rgba(0,0,0,0.4);
+.Kom_Border {
+    border-radius: 3px;
+    border: 1px solid rgba(0, 0, 0, 0.4);
 }
 
-.Kom_BorderBottom{
-	border-bottom: 1px solid rgba(0,0,0,0.1);
+.Kom_BorderBottom {
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
 }
 
-.InfoBox{
-	border: 1px dashed black;
-	color: red;
+.InfoBox {
+    border: 1px dashed black;
+    color: red;
 }
+
+
 /*  Search Result */
-.SR_QuestionHeader{
-	padding: 3px;
-	font-size: 20px;
+
+.SR_QuestionHeader {
+    padding: 3px;
+    font-size: 20px;
 }
 
-.SR_AnswerSectionBottom{
-	border: 1px solid rgba(0,0,0,0.1);
+.SR_AnswerSectionBottom {
+    border: 1px solid rgba(0, 0, 0, 0.1);
 }
+
 
 /* Edit Section */
-.ES_QuestionHeader{
-	padding: 3px;
-	font-size: 14px;
-}
 
+.ES_QuestionHeader {
+    padding: 3px;
+    font-size: 14px;
+}

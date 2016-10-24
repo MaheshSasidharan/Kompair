@@ -6,29 +6,29 @@
                     <div class="SR_IconSection col col-33 Kom_Border">
                         <div class="row">
                             <div>
-                                <div class="AlignCenter">6</div>
+                                <div class="AlignCenter">{{com.oCompair.stars}}</div>
                                 <div>
-                                    <a class="button button-icon icon ion-ios-star col" href="#/tab/facts2"></a>
+                                    <a class="button button-icon icon ion-ios-star col"></a>
                                 </div>
                             </div>
                             <div>
-                                <div class="AlignCenter">6</div>
+                                <div class="AlignCenter">{{com.oCompair.answers}}</div>
                                 <div>
-                                    <a class="button button-icon icon ion-android-locate col" href="#/tab/home"></a>
+                                    <a class="button button-icon icon ion-android-locate col"></a>
                                 </div>
                             </div>
                             <div>
-                                <div class="AlignCenter">6</div>
+                                <div class="AlignCenter">{{com.oCompair.views}}</div>
                                 <div>
-                                    <a class="button button-icon icon ion-eye col" href="#/tab/facts2"></a>
+                                    <a class="button button-icon icon ion-eye col"></a>
                                 </div>
                             </div>
                         </div>
                     </div>
                     <div class="SR_QuestionSection col col-67 Kom_Border">
-                        <div class="SR_QuestionHeader">Apple versus Questions</div>
+                        <div class="SR_QuestionHeader">{{com.oCompair.title}}</div>
                         <div class="row row-bottom">
-                            <button class="button button-small button-outline button-positive BoldItalic">Fruit</button>
+                            <button class="button button-small button-outline button-positive BoldItalic" ng-repeat="cat in com.oCompair.arrCategories">{{cat}}</button>
                         </div>
                     </div>
                 </div>
@@ -37,67 +37,59 @@
                         <div class="col col-33">
                             <div class="row">
                                 <div>
-                                    <a class="button button-icon icon ion-thumbsup col" href="#/tab/facts2"></a>
+                                    <div class="AlignCenter">{{com.oCompair.thumbsUp}}</div>
+                                    <div>
+                                        <a class="button button-icon icon ion-thumbsup col"></a>
+                                    </div>
                                 </div>
                                 <div>
-                                    <a class="button button-icon icon ion-thumbsdown col" href="#/tab/facts2"></a>
+                                    <div class="AlignCenter">{{com.oCompair.thumbsDown}}</div>
+                                    <div>
+                                        <a class="button button-icon icon ion-thumbsdown col"></a>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                         <div class="col col-67">
                             <div class="row">
-                                <h4 class="col">Apple</h4>
-                                <h4 class="col">Orange</h4>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="row row-center Kom_BorderBottom">
-                        <div class="col col-33">Scientific</div>
-                        <div class="col col-67">
-                            <div class="row">
-                                <div class="col">This is some text about Apple</div>
-                                <div class="col">This is some text about Orange</div>
+                                <h4 class="col">{{com.oCompair.oCompairItem[0].item}}</h4>
+                                <h4 class="col">{{com.oCompair.oCompairItem[1].item}}</h4>
                             </div>
                         </div>
                     </div>
-                    <div class="row row-center Kom_BorderBottom">
-                        <div class="col col-33">Nutrients</div>
+                    <div class="row row-center Kom_BorderBottom" ng-repeat="oComp in com.oCompair.oCamparables">
+                        <div class="col col-33">{{oComp.catName}}</div>
                         <div class="col col-67">
-                            <div class="row">
-                                <div class="col">
-                                    <ul style="list-style-type:circle">
-                                        <li>Aplha</li>
-                                        <li>Beta</li>
-                                        <li>Gamma</li>
-                                    </ul>
+                            <ng-switch on="oComp.catType">
+                                <div class="row" ng-switch-when="Text">
+                                    <div class="col">{{oComp.catValues[0]}}</div>
+                                    <div class="col">{{oComp.catValues[1]}}</div>
                                 </div>
-                                <div class="col">
-                                    <ul style="list-style-type:circle">
-                                        <li>Delta</li>
-                                        <li>Theta</li>
-                                        <li>Omega</li>
-                                    </ul>
+                                <div class="row" ng-switch-when="OrderedList">
+                                    <div class="col">
+                                        <ol>
+                                            <li ng-repeat="oVal in oComp.catValues[0]">{{oVal}}</li>
+                                        </ol>
+                                    </div>
+                                    <div class="col">
+                                        <ol>
+                                            <li ng-repeat="oVal in oComp.catValues[1]">{{oVal}}</li>
+                                        </ol>
+                                    </div>
                                 </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="row row-center Kom_BorderBottom">
-                        <div class="col col-33">Physical</div>
-                        <div class="col col-67">
-                            <div class="row">
-                                <div class="col">
-                                    <ul style="list-style-type:disc">
-                                        <li>0.5 lbs</li>
-                                        <li>6 cms</li>
-                                    </ul>
+                                <div class="row" ng-switch-when="UnOrderedList">
+                                    <div class="col">
+                                        <ul style="list-style-type:circle">
+                                            <li ng-repeat="oVal in oComp.catValues[0]">{{oVal}}</li>
+                                        </ul>
+                                    </div>
+                                    <div class="col">
+                                        <ul style="list-style-type:circle">
+                                            <li ng-repeat="oVal in oComp.catValues[1]">{{oVal}}</li>
+                                        </ul>
+                                    </div>
                                 </div>
-                                <div class="col">
-                                    <ul style="list-style-type:disc">
-                                        <li>0.76 lbs</li>
-                                        <li>5.3 cms</li>
-                                    </ul>
-                                </div>
-                            </div>
+                            </ng-switch>
                         </div>
                     </div>
                 </div>
