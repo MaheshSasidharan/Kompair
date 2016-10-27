@@ -6,18 +6,22 @@
         <div class="list">
             <label class="item item-input">
                 <span class="input-label">Email</span>
-                <input type="text" ng-model="lo.user.email" placeholder="someone@something.com">
+                <input type="text" ng-model="lo.user.email" placeholder="email address">
             </label>
             <label class="item item-input">
                 <span class="input-label">Password</span>
                 <input type="password" ng-model="lo.user.password">
             </label>
-            <button class="button button-full button-energized" ng-click="lo.SignIn()">Submit</button>
-            <h3 class="text-center assertive">{{ lo.error.message }}</h3>
-            <h3 ng-if="firebaseUser" class="text-center balanced">Success!</h3>
+            <button class="button button-full button-energized" ng-click="lo.SignIn()"
+            ng-disabled='!lo.user.email || lo.user.email == ""|| !lo.user.password || lo.user.password == ""'>
+            Submit
+            </button>
             <div align="center">
-                <a class="button button-full button-calm" ui-sref="kompair.signup" align="center">Sign Up!</a>
+                <button class="button button-full button-calm" ui-sref="kompair.signup" align="center">
+                Sign Up!
+                </button>
             </div>
+            <h3 class="text-center assertive">{{ lo.sErrorMessage }}</h3>
         </div>
     </ion-content>
 </ion-view>

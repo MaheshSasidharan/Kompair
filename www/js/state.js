@@ -53,7 +53,8 @@ kompair
                 url: "/edit",
                 views: {
                     'home-tab': {
-                        templateUrl: "templates/kompair/edit.html"
+                        templateUrl: "templates/kompair/edit.html",
+                        controller: "EditCtrl as ed"
                     }
                 }
             })
