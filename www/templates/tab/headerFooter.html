@@ -1,7 +1,10 @@
 <ion-header-bar align-title="left" class="bar-calm">
     <h1 class="title">Kompair</h1>
-    <div class="buttons">
-        <a class="button button-energized" ng-click="vm.SignIn()">Login</a>
+    <div class="buttons" ng-show="!vm.oShared.bSingedIn">
+        <a class="button button-energized" ng-click="vm.SignIn_dummy()" ui-sref="kompair.login">Login</a>
+    </div>
+    <div class="buttons" ng-show="vm.oShared.bSingedIn">
+        <label>{{vm.oShared.sSignedInUserId}}</label>
     </div>
 </ion-header-bar>
 <!-- <div align-title="left" class="bar-calm">

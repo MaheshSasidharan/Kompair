@@ -1,5 +1,5 @@
 kompair
-    .config(function($stateProvider, $urlRouterProvider) {
+    .config(function ($stateProvider, $urlRouterProvider) {
         $stateProvider
             .state('kompair', {
                 url: "",
@@ -56,7 +56,26 @@ kompair
                         templateUrl: "templates/kompair/edit.html"
                     }
                 }
-            });
+            })
+        .state('kompair.login', {
+            url: "/login",
+            views: {
+                'home-tab': {
+                    templateUrl: "templates/kompair/login.html",
+                    controller: "LoginCtrl as lo"
+                }
+            }
+        })
+       .state('kompair.signup', {
+           url: "/signup",
+           views: {
+               'home-tab': {
+                   templateUrl: "templates/kompair/signup.html",
+                   controller: "SignUpCtrl as su"
+               }
+           }
+       })
+        ;
 
 
         $urlRouterProvider.otherwise("/home");

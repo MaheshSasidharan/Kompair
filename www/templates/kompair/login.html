@@ -1,0 +1,23 @@
+﻿<ion-view view-title="Login">
+    <ion-header-bar class="bar-stable">
+        <h1 class="title">Ionic Blank Starter</h1>
+    </ion-header-bar>
+    <ion-content>
+        <div class="list">
+            <label class="item item-input">
+                <span class="input-label">Email</span>
+                <input type="text" ng-model="lo.user.email" placeholder="someone@something.com">
+            </label>
+            <label class="item item-input">
+                <span class="input-label">Password</span>
+                <input type="password" ng-model="lo.user.password">
+            </label>
+            <button class="button button-full button-energized" ng-click="lo.SignIn()">Submit</button>
+            <h3 class="text-center assertive">{{ lo.error.message }}</h3>
+            <h3 ng-if="firebaseUser" class="text-center balanced">Success!</h3>
+            <div align="center">
+                <a class="button button-full button-calm" ui-sref="kompair.signup" align="center">Sign Up!</a>
+            </div>
+        </div>
+    </ion-content>
+</ion-view>

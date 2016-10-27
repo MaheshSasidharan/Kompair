@@ -2,6 +2,8 @@ kompair
     .controller('HomeCtrl', ['sharedProperties', HomeCtrl])
     .controller('ResultsCtrl', ['sharedProperties', 'CommonRoutines', ResultsCtrl])
     .controller('CompairCtrl', ['sharedProperties', CompairCtrl])
+    .controller('LoginCtrl', ['sharedProperties', '$firebaseAuth', LoginCtrl])
+    .controller('SignUpCtrl', ['sharedProperties', '$firebaseAuth', SignUpCtrl])
     .controller('MainCtrl', ['$scope', 'sharedProperties', MainCtrl]);
 
 function HomeCtrl(sharedProperties) {
@@ -109,6 +111,37 @@ function CompairCtrl(sharedProperties) {
     var com = this;
     //com.oShared = sharedProperties;
     com.oCompair = sharedProperties.oCompair;
+}
+
+function SignUpCtrl(sharedProperties, $firebaseAuth) {
+    var su = this;
+    su.oShared = sharedProperties;
+    su.SignUp = function () {
+        var auth = $firebaseAuth();
+        auth.$createUserWithEmailAndPassword(su.user.email, su.user.password)
+        //$state.go('tabs.logged_in_home');
+        su.oShared.ChangeStateTo('kompair.home');
+    };
+
+}
+
+function LoginCtrl(sharedProperties, $firebaseAuth) {
+    var lo = this;
+    lo.oShared = sharedProperties;
+    lo.user = {};
+    lo.SignIn = function () {
+        console.log("lo.user:" + JSON.stringify(lo.user));
+        lo.firebaseUser = null;
+        lo.error = null;
+        var auth = $firebaseAuth();
+        auth.$signInWithEmailAndPassword(lo.user.email, lo.user.password).then(function (firebaseUser) {
+            lo.oShared.ChangeStateTo('kompair.home');
+            lo.oShared.bSingedIn = true;
+            lo.oShared.sSignedInUserId = lo.user.email;
+        }).catch(function (error) {
+            lo.error = error;
+        });
+    };
 }
 
 function MainCtrl($scope, sharedProperties) {
