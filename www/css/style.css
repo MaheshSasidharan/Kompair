@@ -6,6 +6,30 @@ div {
 
 /* Common */
 
+ol {
+  list-style: decimal; 
+}
+
+.PaddingZero{
+    padding: 0;
+}
+
+.PaddingLeft5{
+    padding-left: 5px;
+}
+
+.PaddingRight5{
+    padding-right: 5px;
+}
+
+.MarginLeft5{
+    margin-left: 5px;
+}
+
+.MarginRight5{
+    margin-right: 5px;
+}
+
 .button-icon .icon:before,
 .button-icon.icon:before {
     font-size: 22px;
@@ -52,4 +76,9 @@ div {
 .ES_QuestionHeader {
     padding: 3px;
     font-size: 14px;
+}
+
+.ES_container input {
+    background-color: rgba(20,20,20,0.1);
+    padding: 0;
 }

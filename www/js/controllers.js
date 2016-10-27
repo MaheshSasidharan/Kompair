@@ -2,7 +2,8 @@ kompair
     .controller('HomeCtrl', ['sharedProperties', HomeCtrl])
     .controller('ResultsCtrl', ['sharedProperties', 'CommonRoutines', ResultsCtrl])
     .controller('CompairCtrl', ['sharedProperties', CompairCtrl])
-    .controller('MainCtrl', ['$scope', 'sharedProperties', MainCtrl]);
+    .controller('EditCtrl', ['sharedProperties', EditCtrl])
+    .controller('MainCtrl', ['$scope', '$state','sharedProperties', MainCtrl]);
 
 function HomeCtrl(sharedProperties) {
     var vm = this;
@@ -28,7 +29,7 @@ function ResultsCtrl(sharedProperties, CommonRoutines) {
         answers: 9,
         views: 219,
         title: 'Apple vs Android',
-        arrCategories: ['Tech', 'Artificial']
+        arrCategories: ['Technology', 'Artificial']
     }, {
         id: 3,
         stars: 0,
@@ -38,6 +39,27 @@ function ResultsCtrl(sharedProperties, CommonRoutines) {
         arrCategories: ['Color', 'Natural']
     }, {
         id: 4,
+        stars: 7,
+        answers: 14,
+        views: 623,
+        title: 'Apple vs Banana',
+        arrCategories: ['Fruits', 'Natural']
+    }, {
+        id: 5,
+        stars: 7,
+        answers: 14,
+        views: 623,
+        title: 'Apple vs Blackberry',
+        arrCategories: ['Phones', 'Phones', 'Phones', 'Phones', 'Technology']
+    }, {
+        id: 6,
+        stars: 7,
+        answers: 14,
+        views: 623,
+        title: 'Orange vs NewBlack',
+        arrCategories: ['Series']
+    }, {
+        id: 7,
         stars: 7,
         answers: 14,
         views: 623,
@@ -58,35 +80,31 @@ function ResultsCtrl(sharedProperties, CommonRoutines) {
         }, {
             item: "Orange"
         }],
-        oCamparables: [
-          {
+        oCamparables: [{
             catId: 1,
             catType: "Text",
             catName: "Scientific",
             catValues: [
-              "This is some text about Apple",
-              "This is some text about Orange"
+                "This is some text about Apple",
+                "This is some text about Orange"
             ]
-          },
-          {
+        }, {
             catId: 2,
             catType: "OrderedList",
             catName: "Nutrients",
             catValues: [
-              ["Alpha", "Beta", "Gamma"],
-              ["Delta", "Theta", "Omega"]
+                ["Alpha", "Beta", "Gamma"],
+                ["Delta", "Theta", "Omega"]
             ]
-          },
-          {
+        }, {
             catId: 1,
             catType: "UnOrderedList",
             catName: "Physical",
             catValues: [
-              ["0.5 lbs", "6 cms"],
-              ["0.76lbs", "5.3 cms"]
+                ["0.5 lbs", "6 cms"],
+                ["0.76lbs", "5.3 cms"]
             ]
-          }
-        ]
+        }]
     };
 
     res.oShared = sharedProperties;
@@ -109,9 +127,30 @@ function CompairCtrl(sharedProperties) {
     var com = this;
     //com.oShared = sharedProperties;
     com.oCompair = sharedProperties.oCompair;
+
 }
 
-function MainCtrl($scope, sharedProperties) {
+function EditCtrl(sharedProperties) {
+    var ed = this;
+    ed.oShared = sharedProperties;
+    ed.oCompair = angular.copy(sharedProperties.oCompair);
+    //ed.oCompair = sharedProperties.oCompair;
+
+    ed.Helper = {
+        BackToCompare: function(sType) {
+            if (sType == 'update') {
+                sharedProperties.oCompair = ed.oCompair;
+                // Service to update in DB and in return func call this
+                ed.oShared.ChangeStateTo('kompair.compare');
+                
+            } else {
+                ed.oShared.ChangeStateTo('kompair.compare');
+            }
+        }
+    }
+}
+
+function MainCtrl($scope, $state, sharedProperties) {
     var main = this;
     main.oShared = sharedProperties;
 
@@ -129,6 +168,8 @@ function MainCtrl($scope, sharedProperties) {
     });
     $scope.$on("$ionicView.afterEnter", function(event, data) {
         // handle event
+        //$state.transitionTo($state.current, $state.$current.params, { reload: true, inherit: true, notify: true });
+
         return;
         console.log("State Params: ", data.stateId);
     });

@@ -2,6 +2,7 @@ var kompair = angular.module('kompair', ['ionic'])
 
 .config(function($ionicConfigProvider) {
     $ionicConfigProvider.tabs.position('bottom');
+    $ionicConfigProvider.views.maxCache(0);
 })
 
 .run(function($ionicPlatform) {
