@@ -1,0 +1,36 @@
+﻿<ion-view view-title="EditAccount">
+    <ion-content>
+        <div class="list">
+            <h3 align="center">Update Email Address</h3>
+            <label class="item item-input">
+                <span class="input-label text-center">New Email:</span>
+                <input type="text" ng-model="eda.newEmail">
+            </label>
+            <div align="center" class="padding">
+                <button class="button button-energized" ng-click="eda.UpdateEmailAddress()">Update Email</button>
+            </div>
+
+            <h3 align="center">Update Password</h3>
+            <label class="item item-input">
+                <span class="input-label text-center">New Password:</span>
+                <input type="password" ng-model="eda.newPassword">
+            </label>
+            <label class="item item-input">
+                <span class="input-label">Confirm Password:</span>
+                <input type="password" ng-model="eda.passwordConfirm">
+            </label>
+            <div align="center" class="padding">
+                <button class="button button-energized" ng-click="eda.UpdatePassword()" ng-disabled ="!eda.passwordConfirm || eda.passwordConfirm != eda.newPassword">Confirm</button>
+            </div>
+
+            <h3 align = "center">Delete Account</h3>
+            <label class="item item-input">                
+                <span class="input-label text-center">Type 'delete':</span>
+                <input type="text" ng-model="eda.delete">
+            </label>
+            <div align="center" class="padding">
+                <button class="button button-energized" ng-click="eda.deleteAcc()"  ng-disabled ="eda.delete != 'delete'">Delete Account</button>
+            </div>
+        </div>
+    </ion-content>
+</ion-view>
