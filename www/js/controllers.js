@@ -1,5 +1,6 @@
 kompair
-    .controller('HomeCtrl', ['sharedProperties', HomeCtrl])
+    .controller('HomeCtrl', ['sharedProperties', '$firebaseAuth', HomeCtrl])
+    .controller('EditAccCtrl', ['sharedProperties', '$firebaseAuth', EditAccCtrl])
     .controller('ResultsCtrl', ['sharedProperties', 'CommonRoutines', ResultsCtrl])
     .controller('CompairCtrl', ['sharedProperties', CompairCtrl])
     .controller('LoginCtrl', ['sharedProperties', '$firebaseAuth', LoginCtrl])
@@ -8,12 +9,40 @@ kompair
     .controller('EditCtrl', ['sharedProperties', EditCtrl])
     .controller('MainCtrl', ['$scope', '$state', 'sharedProperties', MainCtrl]);
 
-function HomeCtrl(sharedProperties) {
+function HomeCtrl(sharedProperties, $firebaseAuth) {
     var vm = this;
     vm.oShared = sharedProperties;
     vm.oShared.bSingedIn = false;
     vm.SignIn = function() {
         vm.oShared.bSingedIn = true;
+    }
+    vm.LogOut = function () {
+        var auth = $firebaseAuth();
+        auth.$signOut();
+        vm.oShared.bSingedIn = false;
+        vm.oShared.ChangeStateTo('kompair.home');
+    }
+}
+
+function EditAccCtrl(sharedProperties, $firebaseAuth) {
+    var eda = this;
+    eda.oShared = sharedProperties;
+    eda.deleteAcc = function () {
+        var user = firebase.auth().currentUser;
+        user.delete();
+        eda.oShared.bSingedIn = false;
+        eda.oShared.ChangeStateTo('kompair.home');
+    }
+    eda.UpdateEmailAddress = function () {
+        var user = firebase.auth().currentUser;
+        user.updateEmail(eda.newEmail);
+        //eda.oShared.sSignedInUserId = eda.NewEmail;
+        eda.oShared.ChangeStateTo('kompair.home');
+    }
+    eda.UpdatePassword = function () {
+        var user = firebase.auth().currentUser;
+        user.updatePassword(eda.newPassword);
+        eda.oShared.ChangeStateTo('kompair.home');
     }
 }
 
@@ -168,28 +197,41 @@ function LoginCtrl(sharedProperties, $firebaseAuth) {
     var lo = this;
     lo.oShared = sharedProperties;
     lo.user = {};
-    lo.SignIn = function() {
-        lo.firebaseUser = null;
-        lo.error = null;
-        var auth = $firebaseAuth();
-        auth.$signInWithEmailAndPassword(lo.user.email, lo.user.password).then(function(firebaseUser) {
+    lo.fbSignin = function () {
+        var provider = new firebase.auth.FacebookAuthProvider();
+        firebase.auth().signInWithPopup(provider).then(function (result) {
             lo.oShared.ChangeStateTo('kompair.home');
             lo.oShared.bSingedIn = true;
-            lo.oShared.sSignedInUserId = lo.user.email;
-        }).catch(function(error) {
-            switch (error.code) {
-                case "auth/invalid-email":
-                    lo.sErrorMessage = "The email address provided is incorrect.";
-                    break
-                default:
-                case "auth/wrong-password":
-                lo.sErrorMessage = "The password entered is incorrect.";
-                    break
-                    lo.sErrorMessage = "Sorry. Something went wrong. Please try again.";
-                    break;
-            }
+            lo.oShared.sSignedInUserId = result.user.email;
+        }).catch(function (error) {
+
+            lo.sErrorMessage = "Sorry. Something went wrong. Please try again.";
+
         });
-    };
+    }
+    lo.SignIn = function () {
+        var auth = $firebaseAuth();
+        lo.firebaseUser = null;
+        lo.error = null;
+        
+            auth.$signInWithEmailAndPassword(lo.user.email, lo.user.password).then(function (firebaseUser) {
+                lo.oShared.ChangeStateTo('kompair.home');
+                lo.oShared.bSingedIn = true;
+                lo.oShared.sSignedInUserId = lo.user.email;
+            }).catch(function (error) {
+                switch (error.code) {
+                    case "auth/invalid-email":
+                        lo.sErrorMessage = "The email address provided is incorrect.";
+                        break
+                    default:
+                    case "auth/wrong-password":
+                        lo.sErrorMessage = "The password entered is incorrect.";
+                        break
+                        lo.sErrorMessage = "Sorry. Something went wrong. Please try again.";
+                        break;
+                }
+            });
+        }
 }
 
 function MainCtrl($scope, sharedProperties) {

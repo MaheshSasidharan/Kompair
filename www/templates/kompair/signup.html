@@ -1,4 +1,4 @@
-﻿<ion-view view-title="Login">
+﻿<ion-view view-title="SignUp">
     <ion-content>
         <div class="list">
             <label class="item item-input">
@@ -14,7 +14,7 @@
                 <input type="password" ng-model="su.user.passwordConfirm" ng-blur="checkPassword = true">
             </label>
             <h3 ng-if="checkPassword && su.user.password != su.user.passwordConfirm" class="text-center balanced">Passwords do not match</h3>
-            <div align="center">
+            <div align="center"class="padding">
                 <button class="button button-energized" ng-click="su.SignUp()">Submit</button>
             </div>
         </div>

@@ -52,7 +52,7 @@ kompair
             .state('kompair.edit', {
                 url: "/edit",
                 views: {
-                    'home-tab': {
+                   'home-tab': {
                         templateUrl: "templates/kompair/edit.html",
                         controller: "EditCtrl as ed"
                     }
@@ -73,6 +73,15 @@ kompair
                'home-tab': {
                    templateUrl: "templates/kompair/signup.html",
                    controller: "SignUpCtrl as su"
+               }
+           }
+       })
+       .state('kompair.editaccount', {
+           url: "/editaccount",
+           views: {
+               'home-tab': {
+                   templateUrl: "templates/kompair/editaccount.html",
+                   controller: "EditAccCtrl as eda"
                }
            }
        })
