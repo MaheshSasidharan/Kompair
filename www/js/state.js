@@ -1,5 +1,5 @@
 kompair
-    .config(function ($stateProvider, $urlRouterProvider) {
+    .config(function($stateProvider, $urlRouterProvider) {
         $stateProvider
             .state('kompair', {
                 url: "",
@@ -23,11 +23,21 @@ kompair
                     }
                 }
             })
-            .state('kompair.contact', {
-                url: "/contact",
+            // .state('kompair.contact', {
+            //     url: "/contact",
+            //     views: {
+            //         'contact-tab': {
+            //             templateUrl: "templates/base/contact.html"
+            //         }
+            //     }
+            // })
+            .state('kompair.login', {
+                url: "/login",
                 views: {
                     'contact-tab': {
-                        templateUrl: "templates/base/contact.html"
+                        templateUrl: "templates/kompair/login.html",
+                        controller: "LoginCtrl as lo"
+
                     }
                 }
             })
@@ -52,41 +62,38 @@ kompair
             .state('kompair.edit', {
                 url: "/edit",
                 views: {
-                   'home-tab': {
+                    'home-tab': {
                         templateUrl: "templates/kompair/edit.html",
                         controller: "EditCtrl as ed"
                     }
                 }
             })
-        .state('kompair.login', {
-            url: "/login",
-            views: {
-                'home-tab': {
-                    templateUrl: "templates/kompair/login.html",
-                    controller: "LoginCtrl as lo"
+            // .state('kompair.login', {
+            //     url: "/login",
+            //     views: {
+            //         'home-tab': {
+            //             templateUrl: "templates/kompair/login.html",
+            //             controller: "LoginCtrl as lo"
+            //         }
+            //     }
+            // })
+            .state('kompair.editaccount', {
+                url: "/editaccount",
+                views: {
+                    'home-tab': {
+                        templateUrl: "templates/kompair/editaccount.html",
+                        controller: "EditAccCtrl as eda"
+                    }
                 }
-            }
-        })
-       .state('kompair.signup', {
-           url: "/signup",
-           views: {
-               'home-tab': {
-                   templateUrl: "templates/kompair/signup.html",
-                   controller: "SignUpCtrl as su"
-               }
-           }
-       })
-       .state('kompair.editaccount', {
-           url: "/editaccount",
-           views: {
-               'home-tab': {
-                   templateUrl: "templates/kompair/editaccount.html",
-                   controller: "EditAccCtrl as eda"
-               }
-           }
-       })
-        ;
-
-
+            })
+            .state('kompair.signup', {
+                url: "/signup",
+                views: {
+                    'home-tab': {
+                        templateUrl: "templates/kompair/signup.html",
+                        controller: "SignUpCtrl as su"
+                    }
+                }
+            })
         $urlRouterProvider.otherwise("/home");
-    })
+    });

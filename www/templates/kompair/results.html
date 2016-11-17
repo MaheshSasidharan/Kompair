@@ -1,8 +1,16 @@
 <ion-view view-title="Compare Results">
     <ion-content>
         <ion-list>
+        <div ng-show="false">
+        <button ng-click="res.GetData()">Get</button>
+        <button ng-click="res.SaveData(1)">Save</button>
+        <button ng-click="res.SaveData(2)">Save</button>
+        </div>
+        <div ng-show="res.oShared.bSingedIn">
+            <button class="button button-small button-energized BoldItalic col" ng-click="res.Helper.AddNewCompare()">Add</button>
+        </div>
             <ion-item ng-repeat="result in res.arrResults">
-                    <div class="SR_AnswerSectionTop row" ng-click="res.Helper.GetCompare(result.id)">
+                    <div class="SR_AnswerSectionTop row" ng-click="res.Helper.GetCompare(result)">
                         <div class="SR_IconSection col col-33 Kom_Border">
                             <div class="row">
                                 <div>

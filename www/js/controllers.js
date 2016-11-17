@@ -1,7 +1,7 @@
 kompair
     .controller('HomeCtrl', ['sharedProperties', '$firebaseAuth', HomeCtrl])
-    .controller('EditAccCtrl', ['sharedProperties', '$firebaseAuth', EditAccCtrl])
-    .controller('ResultsCtrl', ['sharedProperties', 'CommonRoutines', ResultsCtrl])
+    .controller('EditAccCtrl', ['sharedProperties', EditAccCtrl])
+    .controller('ResultsCtrl', ['$scope', 'sharedProperties', ResultsCtrl])
     .controller('CompairCtrl', ['sharedProperties', CompairCtrl])
     .controller('LoginCtrl', ['sharedProperties', '$firebaseAuth', LoginCtrl])
     .controller('SignUpCtrl', ['sharedProperties', '$firebaseAuth', SignUpCtrl])
@@ -24,7 +24,7 @@ function HomeCtrl(sharedProperties, $firebaseAuth) {
     }
 }
 
-function EditAccCtrl(sharedProperties, $firebaseAuth) {
+function EditAccCtrl(sharedProperties) {
     var eda = this;
     eda.oShared = sharedProperties;
     eda.deleteAcc = function () {
@@ -46,58 +46,78 @@ function EditAccCtrl(sharedProperties, $firebaseAuth) {
     }
 }
 
-function ResultsCtrl(sharedProperties, CommonRoutines) {
+function ResultsCtrl($scope, sharedProperties) {
     var res = this;
-    res.arrResults = [{
-        id: 1,
-        stars: 4,
-        answers: 2,
-        views: 36,
-        title: 'Apple vs Orange',
-        arrCategories: ['Food', 'Natural']
-    }, {
-        id: 2,
-        stars: 4,
-        answers: 9,
-        views: 219,
-        title: 'Apple vs Android',
-        arrCategories: ['Technology', 'Artificial']
-    }, {
-        id: 3,
-        stars: 0,
-        answers: 0,
-        views: 3,
-        title: 'Blue vs Orange',
-        arrCategories: ['Color', 'Natural']
-    }, {
-        id: 4,
-        stars: 7,
-        answers: 14,
-        views: 623,
-        title: 'Apple vs Banana',
-        arrCategories: ['Fruits', 'Natural']
-    }, {
-        id: 5,
-        stars: 7,
-        answers: 14,
-        views: 623,
-        title: 'Apple vs Blackberry',
-        arrCategories: ['Phones', 'Phones', 'Phones', 'Phones', 'Technology']
-    }, {
-        id: 6,
-        stars: 7,
-        answers: 14,
-        views: 623,
-        title: 'Orange vs NewBlack',
-        arrCategories: ['Series']
-    }, {
-        id: 7,
-        stars: 7,
-        answers: 14,
-        views: 623,
-        title: 'Hillary vs Orange',
-        arrCategories: ['Politics']
-    }];
+    res.oShared = sharedProperties;
+    res.GetData = function() {
+        sharedProperties.oFireBaseManager.GetDataByKey('results').then(function(oResults) {
+            res.arrResults = [];
+            for (x in oResults) {
+                res.arrResults.push(oResults[x]);
+            }
+            $scope.$apply();
+        });
+    }
+    res.SaveData = function(nVal) {
+            var oNewResult = new sharedProperties.oConstructor.Constructor_MainResult();
+            if (nVal === 1) {
+                var oSave = sharedProperties.oFireBaseManager.SaveWholeData("results", res.oCompair, true);
+            } else {
+                //oNewResult.arrCategories.push(new sharedProperties.oConstructor.Constructor_Category());
+            }
+        }
+        /*
+            res.arrResults = [{
+                id: 1,
+                stars: 4,
+                answers: 2,
+                views: 36,
+                title: 'Apple vs Orange',
+                arrCategories: ['Food', 'Natural']
+            }, {
+                id: 2,
+                stars: 4,
+                answers: 9,
+                views: 219,
+                title: 'Apple vs Android',
+                arrCategories: ['Technology', 'Artificial']
+            }, {
+                id: 3,
+                stars: 0,
+                answers: 0,
+                views: 3,
+                title: 'Blue vs Orange',
+                arrCategories: ['Color', 'Natural']
+            }, {
+                id: 4,
+                stars: 7,
+                answers: 14,
+                views: 623,
+                title: 'Apple vs Banana',
+                arrCategories: ['Fruits', 'Natural']
+            }, {
+                id: 5,
+                stars: 7,
+                answers: 14,
+                views: 623,
+                title: 'Apple vs Blackberry',
+                arrCategories: ['Phones', 'Phones', 'Phones', 'Phones', 'Technology']
+            }, {
+                id: 6,
+                stars: 7,
+                answers: 14,
+                views: 623,
+                title: 'Orange vs NewBlack',
+                arrCategories: ['Series']
+            }, {
+                id: 7,
+                stars: 7,
+                answers: 14,
+                views: 623,
+                title: 'Hillary vs Orange',
+                arrCategories: ['Politics']
+            }];
+        */
     res.oCompair = {
         id: 1,
         stars: 4,
@@ -139,20 +159,36 @@ function ResultsCtrl(sharedProperties, CommonRoutines) {
         }]
     };
 
-    res.oShared = sharedProperties;
     res.oService = {
-        GetCompare: function(id) {
+        GetCompare: function(oItem) {
             //return CommonRoutines.FindItemInArray(res.arrResults, 'id', id, 'item');
-            return res.oCompair;
+            return oItem;
         }
     }
 
     res.Helper = {
-        GetCompare: function(id) {
-            res.oShared.oCompair = res.oService.GetCompare(id);
+        GetCompare: function(oItem) {
+            res.oShared.oCompair = oItem; //res.oService.GetCompare(id);
             res.oShared.ChangeStateTo('kompair.compare');
+        },
+        AddNewCompare: function() {
+            res.oShared.oCompair = null;
+            res.oShared.ChangeStateTo('kompair.edit');
+        },
+        GetAllData: function(sKey) {
+            sharedProperties.oFireBaseManager.GetDataByKey(sKey).then(function(oResults) {
+                res.arrResults = [];
+                for (x in oResults) {
+                    res.arrResults.push(oResults[x]);
+                }
+                $scope.$apply();
+            });
+        },
+        Init: function() {
+            this.GetAllData('results');
         }
     }
+    res.Helper.Init();
 }
 
 function CompairCtrl(sharedProperties) {
@@ -165,18 +201,59 @@ function CompairCtrl(sharedProperties) {
 function EditCtrl(sharedProperties) {
     var ed = this;
     ed.oShared = sharedProperties;
+    ed.sTypeOfCategory = null;//ed.oShared.oCommonFactory.Constants.ArrOfTypeOfCategories[0].type;
     ed.oCompair = angular.copy(sharedProperties.oCompair);
-    //ed.oCompair = sharedProperties.oCompair;
+    if (ed.oCompair == null) {
+        ed.oCompair = new sharedProperties.oConstructor.Constructor_MainResult();
+        ed.sMode = "Add";
+    } else {
+        ed.sMode = "Edit";
+    }
 
     ed.Helper = {
         BackToCompare: function(sType) {
             if (sType == 'update') {
-                sharedProperties.oCompair = ed.oCompair;
-                // Service to update in DB and in return func call this
-                ed.oShared.ChangeStateTo('kompair.compare');
-
-            } else {
-                ed.oShared.ChangeStateTo('kompair.compare');
+                sharedProperties.oCommonFactory.CleanObjects(ed.oCompair);
+                var savePath = "results" + "/" + ed.oCompair.genKey;
+                var sStatus = sharedProperties.oFireBaseManager.SaveWholeData(savePath, ed.oCompair, false);
+                if (sStatus) {
+                    sharedProperties.oCompair = ed.oCompair;
+                    ed.oShared.ChangeStateTo('kompair.compare');
+                }
+            } else if (sType === 'cancel') {
+                ed.oShared.ChangeStateTo('kompair.results');
+            } else if (sType === 'add') {
+                sharedProperties.oFireBaseManager.SaveWholeData("results", ed.oCompair, true);
+                ed.oShared.ChangeStateTo('kompair.results');
+            }
+        },
+        PushNewType: function(arrObj, sType, sSubType) {
+            switch (sType) {
+                case 'category':
+                    if (!(arrObj instanceof Array)) {
+                        arrObj = [];
+                    }
+                    arrObj.push(new sharedProperties.oConstructor.Constructor_Comparables(ed.sTypeOfCategory));
+                    break;
+                case 'tag':
+                    if (!(arrObj instanceof Array)) {
+                        arrObj = [];
+                    }
+                    arrObj.push("");
+                case 'subCat':
+                    if (!(arrObj.catValues[sSubType] instanceof Array)) {
+                        arrObj.catValues[sSubType] = [];
+                    }
+                    arrObj.catValues[sSubType].push("");
+                    break;
+            }
+        },
+        UpdateValueInArray: function(arrObj, nIndex, sVal) {
+            console.log(arrObj[nIndex]);
+        },
+        DeleteItem: function(oItem, nIndex, sType) {
+            if (sType === 'fromArray') {
+                oItem.splice(nIndex, 1);
             }
         }
     }
@@ -194,20 +271,35 @@ function SignUpCtrl(sharedProperties, $firebaseAuth) {
 }
 
 function LoginCtrl(sharedProperties, $firebaseAuth) {
+    var initDate = new Date();
     var lo = this;
     lo.oShared = sharedProperties;
     lo.user = {};
+    console.log(new Date() - initDate);
     lo.fbSignin = function () {
         var provider = new firebase.auth.FacebookAuthProvider();
+        console.log(new Date() - initDate);
         firebase.auth().signInWithPopup(provider).then(function (result) {
+            console.log(new Date() - initDate);
+            console.log(result);
             lo.oShared.ChangeStateTo('kompair.home');
             lo.oShared.bSingedIn = true;
-            lo.oShared.sSignedInUserId = result.user.email;
-        }).catch(function (error) {
 
-            lo.sErrorMessage = "Sorry. Something went wrong. Please try again.";
-
+            lo.oShared.sSignedInUserId = lo.user.email;
+        }).catch(function(error) {
+            switch (error.code) {
+                case "auth/invalid-email":
+                    lo.sErrorMessage = "The email address provided is incorrect.";
+                    break;
+                case "auth/wrong-password":
+                    lo.sErrorMessage = "The password entered is incorrect.";
+                    break;
+                default:
+                    lo.sErrorMessage = "Sorry. Something went wrong. Please try again.";
+                    break;
+            }
         });
+        console.log(new Date() - initDate);
     }
     lo.SignIn = function () {
         var auth = $firebaseAuth();
@@ -241,6 +333,7 @@ function MainCtrl($scope, sharedProperties) {
     $scope.$on("$ionicView.beforeEnter", function(event, data) {
         // handle event
         //return;
+        //data.enableBack = true;
         console.log("State Params: ", data.stateId);
         //main.showNavHeader = sharedProperties.bSingedIn;
         //main.showNavHeader = data.stateId === "tabs.home" || data.stateId === "tabs.results" || data.stateId === "tabs.answer" || data.stateId === "tabs.logged_in_home" || data.stateId === "tabs.answer2" || data.stateId === "tabs.new" ? false : true;
