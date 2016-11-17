@@ -28,7 +28,7 @@
                     <div class="SR_QuestionSection col col-67 Kom_Border">
                         <div class="SR_QuestionHeader">{{com.oCompair.title}}</div>
                         <div class="row row-bottom">
-                            <button class="button button-small button-outline button-positive BoldItalic" ng-repeat="cat in com.oCompair.arrCategories">{{cat}}</button>
+                            <button class="button button-small button-outline button-positive BoldItalic" ng-repeat="cat in com.oCompair.arrCategories track by $index">{{cat}}</button>
                         </div>
                     </div>
                 </div>
@@ -57,7 +57,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="row row-center Kom_BorderBottom" ng-repeat="oComp in com.oCompair.oCamparables">
+                    <div class="row row-center Kom_BorderBottom" ng-repeat="oComp in com.oCompair.oCamparables track by $index">
                         <div class="col col-33">{{oComp.catName}}</div>
                         <div class="col col-67">
                             <ng-switch on="oComp.catType">
@@ -68,24 +68,24 @@
                                 <div class="row" ng-switch-when="OrderedList">
                                     <div class="col">
                                         <ol>
-                                            <li ng-repeat="oVal in oComp.catValues[0]">{{oVal}}</li>
+                                            <li ng-repeat="oVal in oComp.catValues[0] track by $index">{{oVal}}</li>
                                         </ol>
                                     </div>
                                     <div class="col">
                                         <ol>
-                                            <li ng-repeat="oVal in oComp.catValues[1]">{{oVal}}</li>
+                                            <li ng-repeat="oVal in oComp.catValues[1] track by $index">{{oVal}}</li>
                                         </ol>
                                     </div>
                                 </div>
                                 <div class="row" ng-switch-when="UnOrderedList">
                                     <div class="col">
                                         <ul style="list-style-type:circle">
-                                            <li ng-repeat="oVal in oComp.catValues[0]">{{oVal}}</li>
+                                            <li ng-repeat="oVal in oComp.catValues[0] track by $index">{{oVal}}</li>
                                         </ul>
                                     </div>
                                     <div class="col">
                                         <ul style="list-style-type:circle">
-                                            <li ng-repeat="oVal in oComp.catValues[1]">{{oVal}}</li>
+                                            <li ng-repeat="oVal in oComp.catValues[1] track by $index">{{oVal}}</li>
                                         </ul>
                                     </div>
                                 </div>

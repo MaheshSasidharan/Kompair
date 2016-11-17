@@ -1,4 +1,4 @@
-<ion-view view-title="Edit">
+<ion-view view-title="{{ed.sMode}}">
     <ion-content class="padding">
         <div class="ES_container">
             <div class="AlignCenter InfoBox">
@@ -6,16 +6,26 @@
             </div>
             <div class="SR_AnswerSection">
                 <div class="SR_AnswerSectionTop row">
-                    <div class="SR_IconSection col col-25 Kom_Border">
-                        <div class="row">
-                            Title
+                    <div class="row">
+                        <div class="SR_IconSection col col-25 Kom_Border">
+                            <div class="row">
+                                Title
+                            </div>
+                        </div>
+                        <div class="SR_QuestionSection col col-50 Kom_Border">
+                            <input ng-model="ed.oCompair.title" class="ES_QuestionHeader"></input>
                         </div>
                     </div>
-                    <div class="SR_QuestionSection col col-50 Kom_Border">
-                        <input ng-model="ed.oCompair.title" class="ES_QuestionHeader"></input>
+                </div>
+                <div class="row">
+                    <div class="col col-25">
+                        <div class="row">
+                            Tags
+                        </div>
                     </div>
-                    <div class="row row-bottom">
-                        <!-- <button class="button button-large ion ion-edit"></button> -->
+                    <div class="col col-50">
+                        <input class="row" ng-model="$parent.ed.oCompair.arrCategories[$index]" ng-repeat="tag in ed.oCompair.arrCategories track by $index"></input>
+                        <button class="col button button-small ion ion-plus-circled" ng-click="ed.Helper.PushNewType(ed.oCompair.arrCategories, 'tag')"></button>
                     </div>
                 </div>
                 <div class="SR_AnswerSectionBottom">
@@ -31,7 +41,7 @@
                         <div class="col col-25">
                         </div>
                     </div>
-                    <div class="row row-center Kom_BorderBottom" ng-repeat="oComp in ed.oCompair.oCamparables">
+                    <div class="row row-center Kom_BorderBottom" ng-repeat="oComp in ed.oCompair.oCamparables track by $index">
                         <ng-switch on="oComp.catType" class="row">
                             <div class="col col-25">
                                 <input class="row" ng-model="oComp.catName"></input>
@@ -48,35 +58,51 @@
                                 </div>
                                 <div class="row" ng-switch-when="OrderedList">
                                     <div class="col-50 PaddingRight5">
-                                        <input class="row" ng-model="oVal" ng-repeat="oVal in oComp.catValues[0]"></input>
+                                        <input class="row" ng-model="$parent.oComp.catValues[0][$index]" ng-repeat="oVal in oComp.catValues[0] track by $index"></input>
+                                        <div class="row">
+                                            <button class="col button button-small ion ion-plus-circled" ng-click="ed.Helper.PushNewType(oComp, 'subCat', 0)"></button>
+                                        </div>
                                     </div>
                                     <div class="col-50 PaddingLeft5">
-                                        <input class="row" ng-model="oVal" ng-repeat="oVal in oComp.catValues[1]"></input>
+                                        <input class="row" ng-model="$parent.oComp.catValues[1][$index]" ng-repeat="oVal in oComp.catValues[1] track by $index"></input>
+                                        <div class="row">
+                                            <button class="col button button-small ion ion-plus-circled" ng-click="ed.Helper.PushNewType(oComp, 'subCat', 1)"></button>
+                                        </div>
                                     </div>
                                 </div>
                                 <div class="row" ng-switch-when="UnOrderedList">
                                     <div class="col-50 PaddingRight5">
-                                        <input class="row" ng-model="oVal" ng-repeat="oVal in oComp.catValues[0]"></input>
+                                        <input class="row" ng-model="$parent.oComp.catValues[0][$index]" ng-repeat="oVal in oComp.catValues[0] track by $index"></input>
+                                        <div class="row">
+                                            <button class="col button button-small ion ion-plus-circled" ng-click="ed.Helper.PushNewType(oComp, 'subCat', 0)"></button>
+                                        </div>
                                     </div>
                                     <div class="col-50 PaddingLeft5">
-                                        <input class="row" ng-model="oVal" ng-repeat="oVal in oComp.catValues[1]"></input>
+                                        <input class="row" ng-model="$parent.oComp.catValues[1][$index]" ng-repeat="oVal in oComp.catValues[1] track by $index"></input>
+                                        <div class="row">
+                                            <button class="col button button-small ion ion-plus-circled" ng-click="ed.Helper.PushNewType(oComp, 'subCat', 1)"></button>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
                             <div class="col col-25">
-                                <button class="button button-large ion ion-close-round"></button>
+                                <button class="button button-large ion ion-close-round" ng-click="ed.Helper.DeleteItem(ed.oCompair.oCamparables, $index, 'fromArray')"></button>
                             </div>
                         </ng-switch>
                     </div>
                 </div>
                 <div class="row">
-                    <a class="col button button-small ion ion-plus-circled" href="#tab/new"></a>
+                    <button ng-show="!showCatDropdown" ng-init="showCatDropdown = false" class="col button button-small ion ion-plus-circled" ng-click="showCatDropdown = true"></button>
+                    <select ng-show="showCatDropdown" class="form-control" ng-model="ed.sTypeOfCategory" ng-change="showCatDropdown = false; ed.Helper.PushNewType(ed.oCompair.oCamparables, 'category');">
+                        <option ng-repeat="o in ed.oShared.oCommonFactory.Constants.ArrOfTypeOfCategories track by $index" value="{{o.type}}">
+                            {{o.type}}
+                        </option>
+                    </select>
                 </div>
                 <div class="row">
-                    <button class="button button-small button-calm BoldItalic col" ng-click="ed.Helper.BackToCompare('update')">Update</button>
+                    <button class="button button-small button-calm BoldItalic col" ng-click="ed.Helper.BackToCompare('add')" ng-show="ed.sMode == 'Add'">Add</button>
+                    <button class="button button-small button-calm BoldItalic col" ng-click="ed.Helper.BackToCompare('update')" ng-show="ed.sMode == 'Edit'">Update</button>
                     <button class="button button-small button-assertive BoldItalic col" ng-click="ed.Helper.BackToCompare('cancel')">Cancel</button>
-                    <!-- <button class="button button-small button-calm BoldItalic col" ui-sref="kompair.compare">Update</button>
-                    <button class="button button-small button-assertive BoldItalic col" ui-sref="kompair.compare">Cancel</button> -->
                 </div>
             </div>
         </div>
