@@ -66,58 +66,7 @@ function ResultsCtrl($scope, sharedProperties) {
                 //oNewResult.arrCategories.push(new sharedProperties.oConstructor.Constructor_Category());
             }
         }
-        /*
-            res.arrResults = [{
-                id: 1,
-                stars: 4,
-                answers: 2,
-                views: 36,
-                title: 'Apple vs Orange',
-                arrCategories: ['Food', 'Natural']
-            }, {
-                id: 2,
-                stars: 4,
-                answers: 9,
-                views: 219,
-                title: 'Apple vs Android',
-                arrCategories: ['Technology', 'Artificial']
-            }, {
-                id: 3,
-                stars: 0,
-                answers: 0,
-                views: 3,
-                title: 'Blue vs Orange',
-                arrCategories: ['Color', 'Natural']
-            }, {
-                id: 4,
-                stars: 7,
-                answers: 14,
-                views: 623,
-                title: 'Apple vs Banana',
-                arrCategories: ['Fruits', 'Natural']
-            }, {
-                id: 5,
-                stars: 7,
-                answers: 14,
-                views: 623,
-                title: 'Apple vs Blackberry',
-                arrCategories: ['Phones', 'Phones', 'Phones', 'Phones', 'Technology']
-            }, {
-                id: 6,
-                stars: 7,
-                answers: 14,
-                views: 623,
-                title: 'Orange vs NewBlack',
-                arrCategories: ['Series']
-            }, {
-                id: 7,
-                stars: 7,
-                answers: 14,
-                views: 623,
-                title: 'Hillary vs Orange',
-                arrCategories: ['Politics']
-            }];
-        */
+        
     res.oCompair = {
         id: 1,
         stars: 4,
