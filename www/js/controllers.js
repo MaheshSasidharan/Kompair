@@ -280,12 +280,12 @@ function LoginCtrl(sharedProperties, $firebaseAuth) {
         var provider = new firebase.auth.FacebookAuthProvider();
         console.log(new Date() - initDate);
         firebase.auth().signInWithPopup(provider).then(function (result) {
-            console.log(new Date() - initDate);
-            console.log(result);
+            //console.log(new Date() - initDate);
+            //console.log(result);
             lo.oShared.ChangeStateTo('kompair.home');
             lo.oShared.bSingedIn = true;
 
-            lo.oShared.sSignedInUserId = lo.user.email;
+            lo.oShared.sSignedInUserId = result.user.displayName;
         }).catch(function(error) {
             switch (error.code) {
                 case "auth/invalid-email":
