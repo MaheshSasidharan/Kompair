@@ -1,6 +1,6 @@
 kompair
     .controller('HomeCtrl', ['sharedProperties', '$firebaseAuth', HomeCtrl])
-    .controller('EditAccCtrl', ['sharedProperties', EditAccCtrl])
+    .controller('EditAccCtrl', ['$scope', 'sharedProperties', EditAccCtrl])
     .controller('ResultsCtrl', ['$scope', 'sharedProperties', ResultsCtrl])
     .controller('CompairCtrl', ['sharedProperties', CompairCtrl])
     .controller('LoginCtrl', ['$scope', 'sharedProperties', '$firebaseAuth', LoginCtrl])
@@ -24,55 +24,72 @@ function HomeCtrl(sharedProperties, $firebaseAuth) {
     }
 }
 
-function EditAccCtrl(sharedProperties) {
+function EditAccCtrl($scope, sharedProperties) {
     var eda = this;
     eda.oShared = sharedProperties;
     eda.deleteAcc = function() {
+        sharedProperties.oFireBaseManager.SaveWholeData("users/" + sharedProperties.oSignedInUser.sUId, {}, false);
         var user = firebase.auth().currentUser;
-        user.delete();
-        eda.oShared.bSingedIn = false;
-        eda.oShared.ChangeStateTo('kompair.home');
+        user.delete()
+            .then(function(result) {
+                eda.oShared.bSingedIn = false;
+                eda.oShared.ChangeStateTo('kompair.home');
+            })
+            .catch(eda.CatchHandler);
     }
     eda.UpdateEmailAddress = function() {
         var user = firebase.auth().currentUser;
-        user.updateEmail(eda.newEmail);
-        //eda.oShared.oSignedInUser.sSignedInUserId = eda.NewEmail;
-        eda.oShared.ChangeStateTo('kompair.home');
+        user.updateEmail(eda.newEmail)
+            .then(function() {
+                // Remove old user details
+                sharedProperties.oFireBaseManager.SaveWholeData("users/" + sharedProperties.oSignedInUser.sUId, {}, false);
+                eda.UpdateUserDetails(user);
+                eda.oShared.ChangeStateTo('kompair.home');
+            })
+            .catch(eda.CatchHandler);
+    }
+    eda.UpdateDisplayName = function() {
+        var user = firebase.auth().currentUser;
+        user.updateProfile({
+                displayName: eda.displayName
+            })
+            .then(function() {
+                // Remove old user details
+                sharedProperties.oFireBaseManager.SaveWholeData("users/" + sharedProperties.oSignedInUser.sUId, {}, false);
+                eda.UpdateUserDetails(user);
+                eda.oShared.ChangeStateTo('kompair.home');
+            })
+            .catch(eda.CatchHandler);
     }
     eda.UpdatePassword = function() {
         var user = firebase.auth().currentUser;
-        user.updatePassword(eda.newPassword);
-        eda.oShared.ChangeStateTo('kompair.home');
+        user.updatePassword(eda.newPassword)
+            .then(function(result) {
+                eda.oShared.ChangeStateTo('kompair.home');
+            })
+            .catch(eda.CatchHandler);
+    }
+    eda.UpdateUserDetails = function(user) {
+        var result = {
+            email: user.email,
+            uid: user.uid,
+            displayName: user.displayName
+        }
+        sharedProperties.AddThisUser(result);
+    }
+    eda.CatchHandler = function(error) {
+        if (error.code) {
+            eda.sErrorMessage = sharedProperties.oCommonFactory.GetErrorMessage(error.code);
+            $scope.$apply();
+        } else {
+            su.oShared.ChangeStateTo('kompair.home');
+        }
     }
 }
 
 function ResultsCtrl($scope, sharedProperties) {
     var res = this;
     res.oShared = sharedProperties;
-    res.GetData = function() {
-        sharedProperties.oFireBaseManager.GetDataByKey('results').then(function(oResults) {
-            res.arrResults = [];
-            for (x in oResults) {
-                res.arrResults.push(oResults[x]);
-            }
-            $scope.$apply();
-        });
-    }
-    res.SaveData = function(nVal) {
-        var oNewResult = new sharedProperties.oConstructor.Constructor_MainResult();
-        if (nVal === 1) {
-            var oSave = sharedProperties.oFireBaseManager.SaveWholeData("results", res.oCompair, true);
-        } else {
-            //oNewResult.arrCategories.push(new sharedProperties.oConstructor.Constructor_Category());
-        }
-    }
-
-    res.oService = {
-        GetCompare: function(oItem) {
-            //return CommonRoutines.FindItemInArray(res.arrResults, 'id', id, 'item');
-            return oItem;
-        }
-    }
 
     res.Helper = {
         GetCompare: function(oItem) {
@@ -86,9 +103,12 @@ function ResultsCtrl($scope, sharedProperties) {
         GetAllData: function(sKey) {
             sharedProperties.oFireBaseManager.GetDataByKey(sKey).then(function(oResults) {
                 res.arrResults = [];
+                tempArrResults = [];
                 for (x in oResults) {
-                    res.arrResults.push(oResults[x]);
+                    tempArrResults.push(oResults[x]);
                 }
+                res.arrResults = sharedProperties.oCommonFactory.FindItemInArrayLike(tempArrResults, "title", sharedProperties.oSearch.sSearchTerms);
+                console.log(res.arrResults);
                 $scope.$apply();
             });
         },
@@ -101,9 +121,7 @@ function ResultsCtrl($scope, sharedProperties) {
 
 function CompairCtrl(sharedProperties) {
     var com = this;
-    //com.oShared = sharedProperties;
     com.oCompair = sharedProperties.oCompair;
-
 }
 
 function EditCtrl(sharedProperties) {
@@ -179,10 +197,8 @@ function SignUpCtrl($scope, sharedProperties) {
                 oUser.email = result.email;
                 oUser.uid = result.uid;
                 oUser.displayName = result.displayName;
-                var oSaveUser = {};
-                oSaveUser[result.uid] = oUser;
-                sharedProperties.oCommonFactory.CleanObjects(oSaveUser);
-                sharedProperties.oFireBaseManager.SaveWholeData("users", oSaveUser, false);
+                sharedProperties.oCommonFactory.CleanObjects(oUser);
+                sharedProperties.oFireBaseManager.SaveWholeData("users/" + result.uid, oUser, false);
                 su.oShared.ChangeStateTo('kompair.home');
                 su.oShared.bSingedIn = true;
                 su.oShared.oSignedInUser.sSignedInUserId = su.user.email;
@@ -199,7 +215,6 @@ function SignUpCtrl($scope, sharedProperties) {
 }
 
 function LoginCtrl($scope, sharedProperties, $firebaseAuth) {
-    var initDate = new Date();
     var lo = this;
     lo.oShared = sharedProperties;
     lo.user = {};
@@ -207,45 +222,37 @@ function LoginCtrl($scope, sharedProperties, $firebaseAuth) {
         var provider = new firebase.auth.FacebookAuthProvider();
         firebase.auth().signInWithPopup(provider)
             .then(function(result) {
-                console.log(result);
-                lo.oShared.ChangeStateTo('kompair.home');
-                lo.oShared.bSingedIn = true;
-                lo.oShared.oSignedInUser.sSignedInEmailId = lo.user.email;
-                $scope.$apply();
+                lo.HandleSuccessfulLogin(result.user);
             }).catch(function(error) {
                 lo.sErrorMessage = sharedProperties.oCommonFactory.GetErrorMessage(error.code);
+                $scope.$apply();
             });
-        console.log(new Date() - initDate);
     }
     lo.SignIn = function() {
         lo.firebaseUser = null;
         lo.error = null;
-
         firebase.auth().signInWithEmailAndPassword(lo.user.email, lo.user.password)
             .then(function(result) {
-                lo.GetUserDetail(result.uid);
-                lo.oShared.ChangeStateTo('kompair.home');
-                lo.oShared.bSingedIn = true;
-                $scope.$apply();
+                lo.HandleSuccessfulLogin(result);
             }).catch(function(error) {
                 lo.sErrorMessage = sharedProperties.oCommonFactory.GetErrorMessage(error.code);
+                $scope.$apply();
             });
     }
-    lo.GetUserDetail = function(sKey) {
-        sharedProperties.oFireBaseManager.GetDataByKey('users/' + sKey).then(function(oResults) {
-            sharedProperties.oSignedInUser.sSignedInEmailId = oResults.email;
-            sharedProperties.oSignedInUser.sUId = oResults.uid;
-            sharedProperties.oSignedInUser.sDisplayName = oResults.displayName;
-            sharedProperties.oSignedInUser.UpdateDisplayName();
-            $scope.$apply();
-        });
+    lo.HandleSuccessfulLogin = function(result) {
+        sharedProperties.AddThisUser(result);
+        sharedProperties.GetUserDetail(result.uid, $scope);
+
+        lo.oShared.ChangeStateTo('kompair.home');
+        lo.oShared.bSingedIn = true;
+        $scope.$apply();
     }
     lo.UpdateUserDetails = function(sDisplayName) {
         var oUpdatedUser = {};
 
         oUpdatedUser.email = sharedProperties.oSignedInUser.sSignedInEmailId;
         oUpdatedUser.uid = sharedProperties.oSignedInUser.sUId;
-        oUpdatedUser.displayName = sDisplayName;//sharedProperties.oSignedInUser.sDisplayName;
+        oUpdatedUser.displayName = sDisplayName; //sharedProperties.oSignedInUser.sDisplayName;
 
         sharedProperties.oCommonFactory.CleanObjects(oUpdatedUser);
         var savePath = "users" + "/" + oUpdatedUser.uid;

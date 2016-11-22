@@ -24,6 +24,18 @@ function CommonRoutines() {
                 return array[i];
             }
         },
+        FindItemInArrayLike: function(array, keyName, keyVal) {
+            var returnArray = [];
+            if (undefined === keyVal || null === keyVal) {
+                return null;
+            }
+            for (var i in array) {
+                if (array[i][keyName].toLowerCase().indexOf(keyVal.toLowerCase()) >= 0) {
+                    returnArray.push(array[i]);
+                }
+            }
+            return returnArray;
+        },
         CleanObjects: function(oVal) {
             for (var property in oVal) {
                 if (oVal.hasOwnProperty(property) && (oVal[property] instanceof Array || oVal[property] instanceof Object)) {
@@ -52,6 +64,9 @@ function CommonRoutines() {
                     break;
                 case "auth/email-already-in-use":
                     message = "Sorry! This email is already in use.";
+                    break;
+                    case "auth/user-not-found":
+                    message = "Sorry. User not found."
                     break;
                 default:
                     message = "Sorry. Something went wrong. Please try again.";

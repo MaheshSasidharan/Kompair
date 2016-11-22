@@ -11,13 +11,16 @@ function SharedProp($state, Constructor, CommonFactory, FireBaseManager) {
             sDisplayName: null,
             sDisplayValue: null,
             RefreshCallBack: null,
-            UpdateDisplayName: function(bRefresh){
+            UpdateDisplayName: function(bRefresh) {
                 bRefresh = !bRefresh;
-                this.sDisplayValue = this.sDisplayName ? this.sDisplayName : this.sSignedInEmailId ? this.sSignedInEmailId :  "Login";
-                if(bRefresh && typeof this.RefreshCallBack === "function"){
+                this.sDisplayValue = this.sDisplayName ? this.sDisplayName : this.sSignedInEmailId ? this.sSignedInEmailId : "Login";
+                if (bRefresh && typeof this.RefreshCallBack === "function") {
                     this.RefreshCallBack();
                 }
             },
+        },
+        oSearch: {
+            sSearchTerms: ""
         },
         bSingedIn: false,
         sSignedInUserDisplayName: null,
@@ -27,7 +30,24 @@ function SharedProp($state, Constructor, CommonFactory, FireBaseManager) {
         },
         oConstructor: Constructor,
         oCommonFactory: CommonFactory,
-        oFireBaseManager: FireBaseManager
+        oFireBaseManager: FireBaseManager,
+        AddThisUser: function(result) {
+            var oUser = new oSharedObj.oConstructor.Constructor_User();
+            oUser.email = result.email;
+            oUser.uid = result.uid;
+            oUser.displayName = result.displayName;
+            oSharedObj.oCommonFactory.CleanObjects(oUser);
+            oSharedObj.oFireBaseManager.SaveWholeData("users/" + result.uid, oUser, false);
+        },
+        GetUserDetail: function(sKey, $scope) {
+            oSharedObj.oFireBaseManager.GetDataByKey('users/' + sKey).then(function(oResults) {
+                oSharedObj.oSignedInUser.sSignedInEmailId = oResults.email;
+                oSharedObj.oSignedInUser.sUId = oResults.uid;
+                oSharedObj.oSignedInUser.sDisplayName = oResults.displayName;
+                oSharedObj.oSignedInUser.UpdateDisplayName();
+                $scope.$apply();
+            });
+        }
     }
     return oSharedObj;
 }
@@ -49,7 +69,7 @@ function FireBaseManager($firebaseArray, $firebaseObject) {
             });
         },
         SaveWholeData: function(sKey, oVal, bGenKey) {
-            bGenKey = bGenKey === undefined ? true: bGenKey;
+            bGenKey = bGenKey === undefined ? true : bGenKey;
             var oOriginalProperty = angular.copy(oVal);
             for (var property in oVal) {
                 if (oVal.hasOwnProperty(property) && oVal[property] instanceof Array) {
@@ -74,7 +94,7 @@ function FireBaseManager($firebaseArray, $firebaseObject) {
                 oVal.genKey = newPostKey;
                 firebase.database().ref(sKey).child(newPostKey).set(oVal);
                 return sKey + "/" + newPostKey;
-            }else{
+            } else {
                 firebase.database().ref(sKey).set(oVal);
                 return sKey;
             }
