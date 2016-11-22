@@ -26,6 +26,12 @@ function ConstructorService() {
         Constructor_Tags: function() {
             this.name = "";
             return this;
+        },
+        Constructor_User: function(){
+            this.displayName = "";
+            this.uid = "";
+            this.email = "";
+            return this;
         }
     }
     return oConstructor;

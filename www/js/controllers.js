@@ -3,11 +3,11 @@ kompair
     .controller('EditAccCtrl', ['sharedProperties', EditAccCtrl])
     .controller('ResultsCtrl', ['$scope', 'sharedProperties', ResultsCtrl])
     .controller('CompairCtrl', ['sharedProperties', CompairCtrl])
-    .controller('LoginCtrl', ['sharedProperties', '$firebaseAuth', LoginCtrl])
-    .controller('SignUpCtrl', ['sharedProperties', '$firebaseAuth', SignUpCtrl])
+    .controller('LoginCtrl', ['$scope', 'sharedProperties', '$firebaseAuth', LoginCtrl])
+    .controller('SignUpCtrl', ['$scope', 'sharedProperties', '$firebaseAuth', SignUpCtrl])
     .controller('MainCtrl', ['$scope', 'sharedProperties', MainCtrl])
     .controller('EditCtrl', ['sharedProperties', EditCtrl])
-    .controller('MainCtrl', ['$scope', '$state', 'sharedProperties', MainCtrl]);
+    .controller('MainCtrl', ['$scope', 'sharedProperties', MainCtrl]);
 
 function HomeCtrl(sharedProperties, $firebaseAuth) {
     var vm = this;
@@ -16,7 +16,7 @@ function HomeCtrl(sharedProperties, $firebaseAuth) {
     vm.SignIn = function() {
         vm.oShared.bSingedIn = true;
     }
-    vm.LogOut = function () {
+    vm.LogOut = function() {
         var auth = $firebaseAuth();
         auth.$signOut();
         vm.oShared.bSingedIn = false;
@@ -27,19 +27,19 @@ function HomeCtrl(sharedProperties, $firebaseAuth) {
 function EditAccCtrl(sharedProperties) {
     var eda = this;
     eda.oShared = sharedProperties;
-    eda.deleteAcc = function () {
+    eda.deleteAcc = function() {
         var user = firebase.auth().currentUser;
         user.delete();
         eda.oShared.bSingedIn = false;
         eda.oShared.ChangeStateTo('kompair.home');
     }
-    eda.UpdateEmailAddress = function () {
+    eda.UpdateEmailAddress = function() {
         var user = firebase.auth().currentUser;
         user.updateEmail(eda.newEmail);
-        //eda.oShared.sSignedInUserId = eda.NewEmail;
+        //eda.oShared.oSignedInUser.sSignedInUserId = eda.NewEmail;
         eda.oShared.ChangeStateTo('kompair.home');
     }
-    eda.UpdatePassword = function () {
+    eda.UpdatePassword = function() {
         var user = firebase.auth().currentUser;
         user.updatePassword(eda.newPassword);
         eda.oShared.ChangeStateTo('kompair.home');
@@ -59,54 +59,13 @@ function ResultsCtrl($scope, sharedProperties) {
         });
     }
     res.SaveData = function(nVal) {
-            var oNewResult = new sharedProperties.oConstructor.Constructor_MainResult();
-            if (nVal === 1) {
-                var oSave = sharedProperties.oFireBaseManager.SaveWholeData("results", res.oCompair, true);
-            } else {
-                //oNewResult.arrCategories.push(new sharedProperties.oConstructor.Constructor_Category());
-            }
+        var oNewResult = new sharedProperties.oConstructor.Constructor_MainResult();
+        if (nVal === 1) {
+            var oSave = sharedProperties.oFireBaseManager.SaveWholeData("results", res.oCompair, true);
+        } else {
+            //oNewResult.arrCategories.push(new sharedProperties.oConstructor.Constructor_Category());
         }
-        
-    res.oCompair = {
-        id: 1,
-        stars: 4,
-        answers: 2,
-        views: 36,
-        title: 'Apple vs Orange',
-        arrCategories: ['Food', 'Natural'],
-        thumbsUp: 10,
-        thumbsDown: 20,
-        oCompairItem: [{
-            item: "Apple"
-        }, {
-            item: "Orange"
-        }],
-        oCamparables: [{
-            catId: 1,
-            catType: "Text",
-            catName: "Scientific",
-            catValues: [
-                "This is some text about Apple",
-                "This is some text about Orange"
-            ]
-        }, {
-            catId: 2,
-            catType: "OrderedList",
-            catName: "Nutrients",
-            catValues: [
-                ["Alpha", "Beta", "Gamma"],
-                ["Delta", "Theta", "Omega"]
-            ]
-        }, {
-            catId: 1,
-            catType: "UnOrderedList",
-            catName: "Physical",
-            catValues: [
-                ["0.5 lbs", "6 cms"],
-                ["0.76lbs", "5.3 cms"]
-            ]
-        }]
-    };
+    }
 
     res.oService = {
         GetCompare: function(oItem) {
@@ -150,7 +109,7 @@ function CompairCtrl(sharedProperties) {
 function EditCtrl(sharedProperties) {
     var ed = this;
     ed.oShared = sharedProperties;
-    ed.sTypeOfCategory = null;//ed.oShared.oCommonFactory.Constants.ArrOfTypeOfCategories[0].type;
+    ed.sTypeOfCategory = null; //ed.oShared.oCommonFactory.Constants.ArrOfTypeOfCategories[0].type;
     ed.oCompair = angular.copy(sharedProperties.oCompair);
     if (ed.oCompair == null) {
         ed.oCompair = new sharedProperties.oConstructor.Constructor_MainResult();
@@ -208,76 +167,108 @@ function EditCtrl(sharedProperties) {
     }
 }
 
-function SignUpCtrl(sharedProperties, $firebaseAuth) {
+function SignUpCtrl($scope, sharedProperties) {
     var su = this;
+    su.sErrorMessage = "";
     su.oShared = sharedProperties;
     su.SignUp = function() {
-        var auth = $firebaseAuth();
-        auth.$createUserWithEmailAndPassword(su.user.email, su.user.password);
-        su.oShared.ChangeStateTo('kompair.home');
+        firebase.auth().createUserWithEmailAndPassword(su.user.email, su.user.password)
+            .then(function(result) {
+                console.log(result);
+                var oUser = new sharedProperties.oConstructor.Constructor_User();
+                oUser.email = result.email;
+                oUser.uid = result.uid;
+                oUser.displayName = result.displayName;
+                var oSaveUser = {};
+                oSaveUser[result.uid] = oUser;
+                sharedProperties.oCommonFactory.CleanObjects(oSaveUser);
+                sharedProperties.oFireBaseManager.SaveWholeData("users", oSaveUser, false);
+                su.oShared.ChangeStateTo('kompair.home');
+                su.oShared.bSingedIn = true;
+                su.oShared.oSignedInUser.sSignedInUserId = su.user.email;
+            })
+            .catch(function(error) {
+                if (error.code) {
+                    su.sErrorMessage = sharedProperties.oCommonFactory.GetErrorMessage(error.code);
+                    $scope.$apply();
+                } else {
+                    su.oShared.ChangeStateTo('kompair.home');
+                }
+            });
     };
-
 }
 
-function LoginCtrl(sharedProperties, $firebaseAuth) {
+function LoginCtrl($scope, sharedProperties, $firebaseAuth) {
     var initDate = new Date();
     var lo = this;
     lo.oShared = sharedProperties;
     lo.user = {};
-    console.log(new Date() - initDate);
-    lo.fbSignin = function () {
+    lo.fbSignin = function() {
         var provider = new firebase.auth.FacebookAuthProvider();
-        console.log(new Date() - initDate);
-        firebase.auth().signInWithPopup(provider).then(function (result) {
-            console.log(new Date() - initDate);
-            console.log(result);
-            lo.oShared.ChangeStateTo('kompair.home');
-            lo.oShared.bSingedIn = true;
-
-            lo.oShared.sSignedInUserId = lo.user.email;
-        }).catch(function(error) {
-            switch (error.code) {
-                case "auth/invalid-email":
-                    lo.sErrorMessage = "The email address provided is incorrect.";
-                    break;
-                case "auth/wrong-password":
-                    lo.sErrorMessage = "The password entered is incorrect.";
-                    break;
-                default:
-                    lo.sErrorMessage = "Sorry. Something went wrong. Please try again.";
-                    break;
-            }
-        });
-        console.log(new Date() - initDate);
-    }
-    lo.SignIn = function () {
-        var auth = $firebaseAuth();
-        lo.firebaseUser = null;
-        lo.error = null;
-        
-            auth.$signInWithEmailAndPassword(lo.user.email, lo.user.password).then(function (firebaseUser) {
+        firebase.auth().signInWithPopup(provider)
+            .then(function(result) {
+                console.log(result);
                 lo.oShared.ChangeStateTo('kompair.home');
                 lo.oShared.bSingedIn = true;
-                lo.oShared.sSignedInUserId = lo.user.email;
-            }).catch(function (error) {
-                switch (error.code) {
-                    case "auth/invalid-email":
-                        lo.sErrorMessage = "The email address provided is incorrect.";
-                        break
-                    default:
-                    case "auth/wrong-password":
-                        lo.sErrorMessage = "The password entered is incorrect.";
-                        break
-                        lo.sErrorMessage = "Sorry. Something went wrong. Please try again.";
-                        break;
-                }
+                lo.oShared.oSignedInUser.sSignedInEmailId = lo.user.email;
+                $scope.$apply();
+            }).catch(function(error) {
+                lo.sErrorMessage = sharedProperties.oCommonFactory.GetErrorMessage(error.code);
             });
+        console.log(new Date() - initDate);
+    }
+    lo.SignIn = function() {
+        lo.firebaseUser = null;
+        lo.error = null;
+
+        firebase.auth().signInWithEmailAndPassword(lo.user.email, lo.user.password)
+            .then(function(result) {
+                lo.GetUserDetail(result.uid);
+                lo.oShared.ChangeStateTo('kompair.home');
+                lo.oShared.bSingedIn = true;
+                $scope.$apply();
+            }).catch(function(error) {
+                lo.sErrorMessage = sharedProperties.oCommonFactory.GetErrorMessage(error.code);
+            });
+    }
+    lo.GetUserDetail = function(sKey) {
+        sharedProperties.oFireBaseManager.GetDataByKey('users/' + sKey).then(function(oResults) {
+            sharedProperties.oSignedInUser.sSignedInEmailId = oResults.email;
+            sharedProperties.oSignedInUser.sUId = oResults.uid;
+            sharedProperties.oSignedInUser.sDisplayName = oResults.displayName;
+            sharedProperties.oSignedInUser.UpdateDisplayName();
+            $scope.$apply();
+        });
+    }
+    lo.UpdateUserDetails = function(sDisplayName) {
+        var oUpdatedUser = {};
+
+        oUpdatedUser.email = sharedProperties.oSignedInUser.sSignedInEmailId;
+        oUpdatedUser.uid = sharedProperties.oSignedInUser.sUId;
+        oUpdatedUser.displayName = sDisplayName;//sharedProperties.oSignedInUser.sDisplayName;
+
+        sharedProperties.oCommonFactory.CleanObjects(oUpdatedUser);
+        var savePath = "users" + "/" + oUpdatedUser.uid;
+        var sStatus = sharedProperties.oFireBaseManager.SaveWholeData(savePath, oUpdatedUser, false);
+        if (sStatus) {
+            console.log("UPDATED;")
+                //sharedProperties.oCompair = ed.oCompair;
+                //ed.oShared.ChangeStateTo('kompair.compare');
         }
+    }
 }
 
 function MainCtrl($scope, sharedProperties) {
     var main = this;
     main.oShared = sharedProperties;
+    main.refresh = function() {
+        main.oShared.oSignedInUser.UpdateDisplayName(true);
+        main.DisplayName = main.oShared.oSignedInUser.sDisplayValue;
+    }
+    main.oShared.oSignedInUser.RefreshCallBack = main.refresh;
+
+    main.refresh();
+    //main.hi = sharedProperties.oSignedInUser.sDisplayValue;
 
     $scope.$on("$ionicView.beforeEnter", function(event, data) {
         // handle event

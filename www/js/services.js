@@ -5,8 +5,22 @@ kompair
 
 function SharedProp($state, Constructor, CommonFactory, FireBaseManager) {
     var oSharedObj = {
+        oSignedInUser: {
+            sUId: null,
+            sSignedInEmailId: null,
+            sDisplayName: null,
+            sDisplayValue: null,
+            RefreshCallBack: null,
+            UpdateDisplayName: function(bRefresh){
+                bRefresh = !bRefresh;
+                this.sDisplayValue = this.sDisplayName ? this.sDisplayName : this.sSignedInEmailId ? this.sSignedInEmailId :  "Login";
+                if(bRefresh && typeof this.RefreshCallBack === "function"){
+                    this.RefreshCallBack();
+                }
+            },
+        },
         bSingedIn: false,
-        sSignedInUserId: null,
+        sSignedInUserDisplayName: null,
         oCompair: null,
         ChangeStateTo: function(sState) {
             $state.go(sState);

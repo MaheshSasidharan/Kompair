@@ -29,7 +29,7 @@ function CommonRoutines() {
                 if (oVal.hasOwnProperty(property) && (oVal[property] instanceof Array || oVal[property] instanceof Object)) {
                     oCommonRoutine.CleanObjects(oVal[property]);
                 }
-                if (oVal.hasOwnProperty(property) && typeof oVal[property] === "string" && oVal[property].trim() === "") {
+                if (oVal.hasOwnProperty(property) && (typeof oVal[property] === "string" && oVal[property].trim() === "" || typeof oVal[property] === "function"))  {
                     if (oVal instanceof Array && typeof parseInt(property) === "number") {
                         oVal.splice(parseInt(property), 1);
                     } else {
@@ -37,6 +37,27 @@ function CommonRoutines() {
                     }
                 }
             }
+        },
+        GetErrorMessage: function(errorCode) {
+            var message = "";
+            switch (errorCode) {
+                case "auth/invalid-email":
+                    message = "The email address provided is incorrect.";
+                    break;
+                case "auth/wrong-password":
+                    message = "The password entered is incorrect.";
+                    break;
+                case "auth/weak-password":
+                    message = "The password entered is weak.";
+                    break;
+                case "auth/email-already-in-use":
+                    message = "Sorry! This email is already in use.";
+                    break;
+                default:
+                    message = "Sorry. Something went wrong. Please try again.";
+                    break;
+            }
+            return message;
         },
         Constants: {
             ArrOfTypeOfCategories: [{

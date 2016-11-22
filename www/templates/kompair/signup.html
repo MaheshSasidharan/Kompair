@@ -15,8 +15,9 @@
             </label>
             <h3 ng-if="checkPassword && su.user.password != su.user.passwordConfirm" class="text-center balanced">Passwords do not match</h3>
             <div align="center"class="padding">
-                <button class="button button-energized" ng-click="su.SignUp()">Submit</button>
+                <button class="button button-energized" ng-disabled="!(su.user.password && su.user.password == su.user.passwordConfirm)" ng-click="su.SignUp()">Submit</button>
             </div>
+            <h3 class="text-center assertive">{{ su.sErrorMessage }}</h3>
         </div>
     </ion-content>
 </ion-view>
