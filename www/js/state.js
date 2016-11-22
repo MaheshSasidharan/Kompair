@@ -37,7 +37,6 @@ kompair
                     'contact-tab': {
                         templateUrl: "templates/kompair/login.html",
                         controller: "LoginCtrl as lo"
-
                     }
                 }
             })
