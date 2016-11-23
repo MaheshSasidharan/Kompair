@@ -40,13 +40,23 @@ function SharedProp($state, Constructor, CommonFactory, FireBaseManager) {
             oSharedObj.oFireBaseManager.SaveWholeData("users/" + result.uid, oUser, false);
         },
         GetUserDetail: function(sKey, $scope) {
-            oSharedObj.oFireBaseManager.GetDataByKey('users/' + sKey).then(function(oResults) {
-                oSharedObj.oSignedInUser.sSignedInEmailId = oResults.email;
-                oSharedObj.oSignedInUser.sUId = oResults.uid;
-                oSharedObj.oSignedInUser.sDisplayName = oResults.displayName;
-                oSharedObj.oSignedInUser.UpdateDisplayName();
-                $scope.$apply();
-            });
+            oSharedObj.oFireBaseManager.GetDataByKey('users/' + sKey)
+                .then(function(oResults) {
+                    if(!oResults){
+                        oResults = {};
+                    }
+                    oSharedObj.oSignedInUser.sSignedInEmailId = oResults.email;
+                    oSharedObj.oSignedInUser.sUId = oResults.uid;
+                    oSharedObj.oSignedInUser.sDisplayName = oResults.displayName;
+                    oSharedObj.oSignedInUser.UpdateDisplayName();
+                    $scope.$apply();
+                }).catch(function() {
+                    oSharedObj.oSignedInUser.sSignedInEmailId = null;
+                    oSharedObj.oSignedInUser.sUId = null;
+                    oSharedObj.oSignedInUser.sDisplayName = null;
+                    oSharedObj.oSignedInUser.UpdateDisplayName();
+                    $scope.$apply();
+                });
         }
     }
     return oSharedObj;
@@ -55,6 +65,7 @@ function SharedProp($state, Constructor, CommonFactory, FireBaseManager) {
 function FireBaseManager($firebaseArray, $firebaseObject) {
     var oManager = {
         GetDataByKey: function(sKey) {
+            /*
             var currentUser = firebase.auth().currentUser;
             var userId = null;
             if (currentUser) {
@@ -62,7 +73,7 @@ function FireBaseManager($firebaseArray, $firebaseObject) {
             } else {
                 return { status: false, msg: "Not logged in" }
             }
-
+            */
             return firebase.database().ref(sKey).once('value').then(function(snapshot) {
                 var x = snapshot.val();
                 return x;
