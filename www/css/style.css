@@ -1,3 +1,18 @@
+/* Ionic override */
+button.ion-plus-circled {
+    /* max-height: 20px !important; */
+    margin-top: 12px;
+    padding: 0px !important;
+    font-size: 20px;
+    min-height: 20px !important;
+}
+
+button.ion-plus-circled::before {
+    height: 10px;
+}
+
+/* End */
+
 div {
     /*border: 1px solid rgba(0,0,0,0.1);*/
     box-sizing: border-box;
@@ -7,26 +22,26 @@ div {
 /* Common */
 
 ol {
-  list-style: decimal; 
+    list-style: decimal;
 }
 
-.PaddingZero{
+.PaddingZero {
     padding: 0;
 }
 
-.PaddingLeft5{
+.PaddingLeft5 {
     padding-left: 5px;
 }
 
-.PaddingRight5{
+.PaddingRight5 {
     padding-right: 5px;
 }
 
-.MarginLeft5{
+.MarginLeft5 {
     margin-left: 5px;
 }
 
-.MarginRight5{
+.MarginRight5 {
     margin-right: 5px;
 }
 
@@ -58,7 +73,7 @@ ol {
     color: red;
 }
 
-.Kom_LoggedUserName{
+.Kom_LoggedUserName {
     margin-top: 8px;
 }
 
@@ -68,6 +83,7 @@ ol {
 .SR_QuestionHeader {
     padding: 3px;
     font-size: 20px;
+    overflow: hidden;
 }
 
 .SR_AnswerSectionBottom {
@@ -83,6 +99,6 @@ ol {
 }
 
 .ES_container input {
-    background-color: rgba(20,20,20,0.1);
+    background-color: rgba(20, 20, 20, 0.1);
     padding: 0;
 }
