@@ -151,6 +151,7 @@ function EditCtrl(sharedProperties) {
             } else if (sType === 'cancel') {
                 ed.oShared.ChangeStateTo('kompair.results');
             } else if (sType === 'add') {
+                sharedProperties.oCommonFactory.CleanObjects(ed.oCompair);
                 sharedProperties.oFireBaseManager.SaveWholeData("results", ed.oCompair, true);
                 ed.oShared.ChangeStateTo('kompair.results');
             }
