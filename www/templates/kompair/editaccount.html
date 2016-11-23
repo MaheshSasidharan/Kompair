@@ -2,7 +2,9 @@
     <ion-content>
         <div class="list">
             <h3 align="center">Username</h3>
-            <h4 align="center">{{eda.oShared.sSignedInUserId}}</h4>
+            <h4 align="center">{{eda.oShared.oSignedInUser.sDisplayName ? eda.oShared.oSignedInUser.sDisplayName : eda.oShared.oSignedInUser.sSignedInEmailId}}</h4>
+            <!--<h4 align="center" ng-show="eda.oShared.oSignedInUser.sDisplayName == null">{{eda.oShared.oSignedInUser.sSignedInEmailId}}</h4>
+            <h4 align="center" ng-show="eda.oShared.oSignedInUser.sDisplayName != null">{{eda.oShared.oSignedInUser.sDisplayName}}</h4>-->
             <h3 align="center">Update Email Address</h3>
             <label class="item item-input">
                 <span class="input-label text-center">New Email:</span>
