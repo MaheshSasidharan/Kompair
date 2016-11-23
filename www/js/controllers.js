@@ -1,5 +1,5 @@
 kompair
-    .controller('HomeCtrl', ['sharedProperties', '$firebaseAuth', HomeCtrl])
+    .controller('HomeCtrl', ['$scope','sharedProperties', '$firebaseAuth', HomeCtrl])
     .controller('EditAccCtrl', ['$scope', 'sharedProperties', EditAccCtrl])
     .controller('ResultsCtrl', ['$scope', 'sharedProperties', ResultsCtrl])
     .controller('CompairCtrl', ['sharedProperties', CompairCtrl])
@@ -9,7 +9,7 @@ kompair
     .controller('EditCtrl', ['sharedProperties', EditCtrl])
     .controller('MainCtrl', ['$scope', 'sharedProperties', MainCtrl]);
 
-function HomeCtrl(sharedProperties, $firebaseAuth) {
+function HomeCtrl($scope, sharedProperties, $firebaseAuth) {
     var vm = this;
     vm.oShared = sharedProperties;
     vm.oShared.bSingedIn = false;
@@ -19,6 +19,8 @@ function HomeCtrl(sharedProperties, $firebaseAuth) {
     vm.LogOut = function() {
         var auth = $firebaseAuth();
         auth.$signOut();
+        sharedProperties.GetUserDetail("none", $scope);
+        vm.oShared.oSignedInUser.UpdateDisplayName(false);
         vm.oShared.bSingedIn = false;
         vm.oShared.ChangeStateTo('kompair.home');
     }
@@ -108,7 +110,7 @@ function ResultsCtrl($scope, sharedProperties) {
                     tempArrResults.push(oResults[x]);
                 }
                 res.arrResults = sharedProperties.oCommonFactory.FindItemInArrayLike(tempArrResults, "title", sharedProperties.oSearch.sSearchTerms);
-                console.log(res.arrResults);
+                //console.log(res.arrResults);
                 $scope.$apply();
             });
         },
@@ -277,18 +279,22 @@ function MainCtrl($scope, sharedProperties) {
     main.refresh();
     //main.hi = sharedProperties.oSignedInUser.sDisplayValue;
 
+    $scope.$watch('main.DisplayName', function() {
+        console.log('CHANGED!');
+    });
+
     $scope.$on("$ionicView.beforeEnter", function(event, data) {
         // handle event
         //return;
         //data.enableBack = true;
-        console.log("State Params: ", data.stateId);
+        //console.log("State Params: ", data.stateId);
         //main.showNavHeader = sharedProperties.bSingedIn;
         //main.showNavHeader = data.stateId === "tabs.home" || data.stateId === "tabs.results" || data.stateId === "tabs.answer" || data.stateId === "tabs.logged_in_home" || data.stateId === "tabs.answer2" || data.stateId === "tabs.new" ? false : true;
     });
     $scope.$on("$ionicView.enter", function(event, data) {
         // handle event
-        return;
-        console.log("State Params: ", data.stateId);
+        //return;
+        //console.log("State Params: ", data.stateId);
     });
     $scope.$on("$ionicView.afterEnter", function(event, data) {
         // handle event
