@@ -1,0 +1,43 @@
+﻿<ion-view view-title="Your Question">
+    <ion-content>
+        <h3>Questions created by {{qRes.oShared.oSignedInUser.sDisplayName}}</h3>
+        <ion-list>
+            <ion-item ng-repeat="result in qRes.arrResults">
+                <div class="SR_AnswerSectionTop row" ng-click="qRes.Helper.GetCompare(result)">
+                    <div class="SR_IconSection col col-33 Kom_Border">
+                        <div class="row">
+                            <div>
+                                <div class="AlignCenter">{{result.stars}}</div>
+                                <div>
+                                    <a class="button button-icon icon ion-ios-star col"></a>
+                                </div>
+                            </div>
+                            <div>
+                                <div class="AlignCenter">{{result.answers}}</div>
+                                <div>
+                                    <a class="button button-icon icon ion-android-locate col"></a>
+                                </div>
+                            </div>
+                            <div>
+                                <div class="AlignCenter">{{result.views}}</div>
+                                <div>
+                                    <a class="button button-icon icon ion-eye col"></a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="SR_QuestionSection col col-67 Kom_Border">
+                        <div class="SR_QuestionHeader">{{result.title}}</div>
+                        <div class="row row-bottom">
+                            <button class="button button-small button-outline button-positive BoldItalic"
+                                    ng-repeat="cat in result.arrCategories | limitTo:3 track by $index">
+                                {{cat}}
+                            </button>
+                            <span ng-show="result.arrCategories.length > 3">&nbsp...</span>
+                        </div>
+                    </div>
+                </div>
+            </ion-item>
+        </ion-list>
+    </ion-content>
+</ion-view>

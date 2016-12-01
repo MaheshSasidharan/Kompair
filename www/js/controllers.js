@@ -2,6 +2,7 @@ kompair
     .controller('HomeCtrl', ['$scope','sharedProperties', '$firebaseAuth', HomeCtrl])
     .controller('EditAccCtrl', ['$scope', 'sharedProperties', EditAccCtrl])
     .controller('ResultsCtrl', ['$scope', 'sharedProperties', ResultsCtrl])
+    .controller('YourQCtrl', ['$scope', 'sharedProperties', YourQCtrl])
     .controller('CompairCtrl', ['sharedProperties', CompairCtrl])
     .controller('LoginCtrl', ['$scope', 'sharedProperties', '$firebaseAuth', LoginCtrl])
     .controller('SignUpCtrl', ['$scope', 'sharedProperties', '$firebaseAuth', SignUpCtrl])
@@ -119,6 +120,33 @@ function ResultsCtrl($scope, sharedProperties) {
         }
     }
     res.Helper.Init();
+}
+
+function YourQCtrl($scope, sharedProperties) {
+    var qRes = this;
+    qRes.oShared = sharedProperties;
+
+    qRes.Helper = {
+        GetCompare: function (oItem) {
+            qRes.oShared.oCompair = oItem; //res.oService.GetCompare(id);
+            qRes.oShared.ChangeStateTo('kompair.compare');
+        },
+        GetAllData: function (sKey) {
+            sharedProperties.oFireBaseManager.GetDataByKey(sKey).then(function (oResults) {
+                qRes.arrResults = [];
+                tempArrResults = [];
+                for (x in oResults) {
+                    tempArrResults.push(oResults[x]);
+                }
+                qRes.arrResults = sharedProperties.oCommonFactory.FindItemInArrayLike(tempArrResults, "createdBy", sharedProperties.oSignedInUser.sUId);
+                $scope.$apply();
+            });
+        },
+        Init: function () {
+            this.GetAllData('results');
+        }
+    }
+    qRes.Helper.Init();
 }
 
 function CompairCtrl(sharedProperties) {
