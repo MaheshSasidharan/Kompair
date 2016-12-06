@@ -8,11 +8,11 @@
                             <div>
                                 <div class="AlignCenter">{{com.oCompair.stars}}</div>
                                 <div>
-                                    <a class="button button-icon icon ion-ios-star col"></a>
+                                    <a class="button button-icon icon ion-ios-star col" ng-class="{'SR_UserMarked': com.has_stars}" ng-click="com.Helper.UpdateFeedback('has_stars')"></a>
                                 </div>
                             </div>
                             <div>
-                                <div class="AlignCenter">{{com.oCompair.answers}}</div>
+                                <div class="AlignCenter">{{com.oCompair.arrCategories.length}}</div>
                                 <div>
                                     <a class="button button-icon icon ion-android-locate col"></a>
                                 </div>
@@ -39,13 +39,13 @@
                                 <div>
                                     <div class="AlignCenter">{{com.oCompair.thumbsUp}}</div>
                                     <div>
-                                        <a class="button button-icon icon ion-thumbsup col"></a>
+                                        <a class="button button-icon icon ion-thumbsup col" ng-class="{'SR_UserMarked': com.has_thumbsUp}" ng-click="com.Helper.UpdateFeedback('has_thumbsUp')"></a>
                                     </div>
                                 </div>
                                 <div>
                                     <div class="AlignCenter">{{com.oCompair.thumbsDown}}</div>
                                     <div>
-                                        <a class="button button-icon icon ion-thumbsdown col"></a>
+                                        <a class="button button-icon icon ion-thumbsdown col" ng-class="{'SR_UserMarked': com.has_thumbsDown}" ng-click="com.Helper.UpdateFeedback('has_thumbsDown')"></a>
                                     </div>
                                 </div>
                             </div>

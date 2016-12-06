@@ -19,6 +19,7 @@ function SharedProp($state, Constructor, CommonFactory, FireBaseManager) {
                 }
             },
         },
+        oCurrentLoggedInUser: null,
         oSearch: {
             sSearchTerms: ""
         },
@@ -32,19 +33,27 @@ function SharedProp($state, Constructor, CommonFactory, FireBaseManager) {
         oCommonFactory: CommonFactory,
         oFireBaseManager: FireBaseManager,
         AddThisUser: function(result) {
-            var oUser = new oSharedObj.oConstructor.Constructor_User();
-            oUser.email = result.email;
-            oUser.uid = result.uid;
-            oUser.displayName = result.displayName;
-            oSharedObj.oCommonFactory.CleanObjects(oUser);
-            oSharedObj.oFireBaseManager.SaveWholeData("users/" + result.uid, oUser, false);
+            // Check if user exists
+            oSharedObj.oFireBaseManager.GetDataByKey('users/' + result.uid)
+                .then(function(oResults) {
+                    if (!oResults) {
+                        var oUser = new oSharedObj.oConstructor.Constructor_User();
+                        oUser.email = result.email;
+                        oUser.uid = result.uid;
+                        oUser.displayName = result.displayName;
+                        oSharedObj.oCommonFactory.CleanObjects(oUser);
+                        oSharedObj.oFireBaseManager.SaveWholeData("users/" + result.uid, oUser, false);
+                    }
+                });
+
         },
         GetUserDetail: function(sKey, $scope) {
             oSharedObj.oFireBaseManager.GetDataByKey('users/' + sKey)
                 .then(function(oResults) {
-                    if(!oResults){
+                    if (!oResults) {
                         oResults = {};
                     }
+                    oSharedObj.oCurrentLoggedInUser = oResults;
                     oSharedObj.oSignedInUser.sSignedInEmailId = oResults.email;
                     oSharedObj.oSignedInUser.sUId = oResults.uid;
                     oSharedObj.oSignedInUser.sDisplayName = oResults.displayName;
@@ -96,7 +105,10 @@ function FireBaseManager($firebaseArray, $firebaseObject) {
                     oManager.SaveWholeData(updatedReference, oVal[property], false);
                 }
             }
-            return true;
+            return {
+                status: true,
+                sKey: sOwnRef
+            };
             //return sOwnRef.split("/")[1];
         },
         SaveDataByKey: function(sKey, oVal, bGenKey) {

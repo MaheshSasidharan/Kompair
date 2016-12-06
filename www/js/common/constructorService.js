@@ -13,8 +13,9 @@ function ConstructorService() {
             this.thumbsUp = 0;
             this.thumbsDown = 0;
             this.oCompairItem = [{ item: "" }, { item: "" }];
-            this.oCamparables = [new oConstructor.Constructor_Comparables()];
-            this.createdBy = firebase.auth().currentUser.uid,
+            this.oCamparables = [];
+            //this.createdBy = firebase.auth().currentUser.uid;
+            this.createdBy = oItem.createdBy;
             this.createdWhen = new Date();
         },
         Constructor_Comparables: function(sType) {

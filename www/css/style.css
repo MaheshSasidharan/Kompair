@@ -90,6 +90,12 @@ ol {
     border: 1px solid rgba(0, 0, 0, 0.1);
 }
 
+/* Compare section */
+
+.SR_UserMarked {
+    color: red;
+}
+
 
 /* Edit Section */
 

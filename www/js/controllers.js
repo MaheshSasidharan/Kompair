@@ -1,5 +1,5 @@
 kompair
-    .controller('HomeCtrl', ['$scope','sharedProperties', '$firebaseAuth', HomeCtrl])
+    .controller('HomeCtrl', ['$scope', 'sharedProperties', '$firebaseAuth', HomeCtrl])
     .controller('EditAccCtrl', ['$scope', 'sharedProperties', EditAccCtrl])
     .controller('ResultsCtrl', ['$scope', 'sharedProperties', ResultsCtrl])
     .controller('CompairCtrl', ['sharedProperties', CompairCtrl])
@@ -124,6 +124,115 @@ function ResultsCtrl($scope, sharedProperties) {
 function CompairCtrl(sharedProperties) {
     var com = this;
     com.oCompair = sharedProperties.oCompair;
+
+    com.has_stars = false;
+    com.has_thumbsUp = false;
+    com.has_thumbsDown = false;
+
+    com.Helper = {
+            Init: function() {
+                var questionId = com.oCompair.genKey;
+                var arrFeedbacks = ['arrStars', 'arrThumbsUp', 'arrThumbsDown'];
+                arrFeedbacks.forEach(function(sKey) {
+                    var index = sharedProperties.oCurrentLoggedInUser[sKey] ? sharedProperties.oCurrentLoggedInUser[sKey].indexOf(questionId) : -1;
+                    switch (sKey) {
+                        case 'arrStars':
+                            com.has_stars = index > -1 ? true : false;
+                            break;
+                        case 'arrThumbsUp':
+                            com.has_thumbsUp = index > -1 ? true : false;
+                            break;
+                        case 'arrThumbsDown':
+                            com.has_thumbsDown = index > -1 ? true : false;
+                            break;
+                    }
+                });
+            },
+            UpdateFeedback: function(sFeedback) {
+                var curUser = firebase.auth().currentUser;
+                if (curUser) {
+                    var sKey = null;
+                    var sKeyForQuestion = null;
+                    switch (sFeedback) {
+                        case 'has_stars':
+                            sKey = "arrStars";
+                            sKeyForQuestion = "stars";
+                            break;
+                        case 'has_thumbsUp':
+                            sKey = "arrThumbsUp";
+                            sKeyForQuestion = "thumbsUp";
+                            break;
+                        case 'has_thumbsDown':
+                            sKey = "arrThumbsDown";
+                            sKeyForQuestion = "thumbsDown";
+                            break;
+                    }
+                    if (sKey) {
+                        var questionId = com.oCompair.genKey;
+                        var uId = firebase.auth().currentUser.uid;
+                        if (sharedProperties.oCurrentLoggedInUser[sKey]) {
+                            // Update existing
+                            var index = sharedProperties.oCurrentLoggedInUser[sKey].indexOf(questionId);
+                            // Check if value already exists
+                            if (index > -1) {
+                                // true, then remove item
+                                var arrayObject = sharedProperties.oCurrentLoggedInUser[sKey];
+                                arrayObject.splice(index, 1);
+                                sharedProperties.oFireBaseManager.SaveWholeData("users/" + uId + "/" + sKey, arrayObject, false);
+                                this.UpdateQuestionFeedback(sKeyForQuestion, 'decr');
+                            } else {
+                                // Add item
+                                var arrayObject = sharedProperties.oCurrentLoggedInUser[sKey];
+                                arrayObject.push(questionId);
+                                sharedProperties.oFireBaseManager.SaveWholeData("users/" + uId + "/" + sKey, arrayObject, false);
+                                this.UpdateQuestionFeedback(sKeyForQuestion, 'incr');
+                            }
+                        } else {
+                            // Add brand new
+                            var arrayObject = [questionId];
+                            sharedProperties.oCurrentLoggedInUser[sKey] = arrayObject;
+                            sharedProperties.oFireBaseManager.SaveWholeData("users/" + uId + "/" + sKey, arrayObject, false);
+                            this.UpdateQuestionFeedback(sKeyForQuestion, 'incr');
+                        }
+                    }
+                    this.Init();
+                }
+            },
+            UpdateQuestionFeedback: function(sType, incrOrDecr) {
+                var sKey = null;
+                var sKeyVal = 0;
+                switch (sType) {
+                    case 'stars':
+                        sKey = sType;
+                        break;
+                    case 'thumbsUp':
+                        sKey = sType;
+                        break;
+                    case 'thumbsDown':
+                        sKey = sType;
+                        break;
+                    case 'views':
+                        sKey = sType;
+                        break;
+                }
+                var sKeyVal = 0;
+                if (com.oCompair[sKey] !== null || com.oCompair[sKey] !== undefined) {
+                    sKeyVal = parseInt(com.oCompair[sKey]);
+                }
+                if (incrOrDecr === 'incr') {
+                    ++sKeyVal;
+                } else {
+                    --sKeyVal;
+                }
+                com.oCompair[sKey] = sKeyVal;
+
+                var savePath = "results" + "/" + com.oCompair.genKey + "/" + sKey;
+                sharedProperties.oFireBaseManager.SaveWholeData(savePath, sKeyVal, false);
+            }
+        }
+        // Increase view by one
+    com.Helper.UpdateQuestionFeedback('views', 'incr');
+    com.Helper.Init();
 }
 
 function EditCtrl(sharedProperties) {
@@ -132,7 +241,11 @@ function EditCtrl(sharedProperties) {
     ed.sTypeOfCategory = null; //ed.oShared.oCommonFactory.Constants.ArrOfTypeOfCategories[0].type;
     ed.oCompair = angular.copy(sharedProperties.oCompair);
     if (ed.oCompair == null) {
-        ed.oCompair = new sharedProperties.oConstructor.Constructor_MainResult();
+        var createdBy = {
+            displayName: sharedProperties.oSignedInUser.sDisplayValue,
+            uId: sharedProperties.oSignedInUser.sUId
+        }
+        ed.oCompair = new sharedProperties.oConstructor.Constructor_MainResult({ createdBy: createdBy });
         ed.sMode = "Add";
     } else {
         ed.sMode = "Edit";
@@ -143,7 +256,8 @@ function EditCtrl(sharedProperties) {
             if (sType == 'update') {
                 sharedProperties.oCommonFactory.CleanObjects(ed.oCompair);
                 var savePath = "results" + "/" + ed.oCompair.genKey;
-                var sStatus = sharedProperties.oFireBaseManager.SaveWholeData(savePath, ed.oCompair, false);
+                var oStatus = sharedProperties.oFireBaseManager.SaveWholeData(savePath, ed.oCompair, false);
+                var sStatus = oStatus ? oStatus.status : false;
                 if (sStatus) {
                     sharedProperties.oCompair = ed.oCompair;
                     ed.oShared.ChangeStateTo('kompair.compare');
@@ -152,7 +266,21 @@ function EditCtrl(sharedProperties) {
                 ed.oShared.ChangeStateTo('kompair.results');
             } else if (sType === 'add') {
                 sharedProperties.oCommonFactory.CleanObjects(ed.oCompair);
-                sharedProperties.oFireBaseManager.SaveWholeData("results", ed.oCompair, true);
+                var oStatus = sharedProperties.oFireBaseManager.SaveWholeData("results", ed.oCompair, true);
+                var sStatus = oStatus ? oStatus.status : false;
+                if (sStatus) {
+                    var questionId = oStatus.sKey.split("/")[1];
+                    var uId = firebase.auth().currentUser.uid;
+                    if (sharedProperties.oCurrentLoggedInUser.arrAnswers) {
+                        var arrAnswers = sharedProperties.oCurrentLoggedInUser.arrAnswers;
+                        arrAnswers.push(questionId);
+                        sharedProperties.oFireBaseManager.SaveWholeData("users/" + uId + "/arrAnswers", arrAnswers, false);
+                    } else {
+                        var arrAnswers = [questionId];
+                        sharedProperties.oCurrentLoggedInUser.arrAnswers = arrAnswers;
+                        sharedProperties.oFireBaseManager.SaveWholeData("users/" + uId + "/arrAnswers", arrAnswers, false);
+                    }
+                }
                 ed.oShared.ChangeStateTo('kompair.results');
             }
         },
@@ -259,7 +387,8 @@ function LoginCtrl($scope, sharedProperties, $firebaseAuth) {
 
         sharedProperties.oCommonFactory.CleanObjects(oUpdatedUser);
         var savePath = "users" + "/" + oUpdatedUser.uid;
-        var sStatus = sharedProperties.oFireBaseManager.SaveWholeData(savePath, oUpdatedUser, false);
+        var oStatus = sharedProperties.oFireBaseManager.SaveWholeData(savePath, oUpdatedUser, false);
+        var sStatus = oStatus ? oStatus.status : false;
         if (sStatus) {
             console.log("UPDATED;")
                 //sharedProperties.oCompair = ed.oCompair;
