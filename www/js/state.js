@@ -94,5 +94,14 @@ kompair
                     }
                 }
             })
+            .state('kompair.yourQ', {
+                url: "/yourQ",
+                views: {
+                    'home-tab': {
+                        templateUrl: "templates/kompair/yourQ.html",
+                        controller: "YourQCtrl as qRes"
+                    }
+                }
+            })
         $urlRouterProvider.otherwise("/home");
     });

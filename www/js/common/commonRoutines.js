@@ -24,16 +24,23 @@ function CommonRoutines() {
                 return array[i];
             }
         },
-        FindItemInArrayLike: function(array, keyName, keyVal) {
+        FindItemInArrayLike: function (array, keyName, keyVal) {
             var returnArray = [];
             if (undefined === keyVal || null === keyVal) {
                 return null;
             }
-            for (var i in array) {
-                if (array[i][keyName].toLowerCase().indexOf(keyVal.toLowerCase()) >= 0) {
-                    returnArray.push(array[i]);
+                for (var i in array) {
+                    if (keyName === 'createdBy') {
+                        if (array[i][keyName].uId.toLowerCase().indexOf(keyVal.toLowerCase()) >= 0) {
+                            returnArray.push(array[i]);
+                        }
+                    }
+                    else {
+                        if (array[i][keyName].toLowerCase().indexOf(keyVal.toLowerCase()) >= 0) {
+                            returnArray.push(array[i]);
+                        }
+                    }
                 }
-            }
             return returnArray;
         },
         CleanObjects: function(oVal) {
