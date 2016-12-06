@@ -1,6 +1,6 @@
 ﻿<ion-view view-title="Your Question">
     <ion-content>
-        <h3>Questions created by {{qRes.oShared.oSignedInUser.sDisplayName}}</h3>
+        <h3 class="AlignCenter">Questions created by<br> {{qRes.oShared.oSignedInUser.sDisplayName ? qRes.oShared.oSignedInUser.sDisplayName : qRes.oShared.oSignedInUser.sSignedInEmailId}}</h3>
         <ion-list>
             <ion-item ng-repeat="result in qRes.arrResults">
                 <div class="SR_AnswerSectionTop row" ng-click="qRes.Helper.GetCompare(result)">

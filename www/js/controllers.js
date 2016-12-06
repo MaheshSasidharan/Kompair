@@ -54,7 +54,7 @@ function EditAccCtrl($scope, sharedProperties) {
     eda.UpdateDisplayName = function() {
         var user = firebase.auth().currentUser;
         user.updateProfile({
-                displayName: eda.displayName
+            displayName: eda.displayName
             })
             .then(function() {
                 // Remove old user details
