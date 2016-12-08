@@ -30,8 +30,8 @@ function CommonRoutines() {
                 return null;
             }
                 for (var i in array) {
-                    if (keyName === 'createdBy') {
-                        if (array[i][keyName].uId.toLowerCase().indexOf(keyVal.toLowerCase()) >= 0) {
+                    if (keyName === 'createdBy' && null !== array[i][keyName]) {
+                        if (array[i][keyName].uId && array[i][keyName].uId.toLowerCase().indexOf(keyVal.toLowerCase()) >= 0) {
                             returnArray.push(array[i]);
                         }
                     }
